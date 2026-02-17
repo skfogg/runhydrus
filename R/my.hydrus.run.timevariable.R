@@ -1,52 +1,52 @@
 # Create the Run Hydrus Function ####
 #' Title
 #'
-#' @param met.data
-#' @param model.start1
-#' @param model.end1
-#' @param model.start2
-#' @param model.end2
-#' @param vgs
-#' @param SS.name
-#' @param obs9
-#' @param modelroots
-#' @param root.info
-#' @param generalized
-#' @param crop.schedule
-#' @param irrigation.schedule
-#' @param model.number
-#' @param time.variable
-#' @param timestep.short
+#' @param met.data dataframe(date, precip, pet, min temp, max temp)
+#' @param model.start1 date model 1 starts (must be within met.data date range)
+#' @param model.end1 date model ends 1 (must be within met.data date range)
+#' @param model.start2 date additional model(s) start
+#' @param model.end2 date additional model(s) end
+#' @param vgs list of 18 van genuchten parameters; named: thetar,thetas,alpha,n,ksat,l,thetar2,thetas2,alpha2,n2,omega
+#' @param SS.name name of scenario set (unique combo of uncertainty paramters, VG etc.)
+#' @param obs9 data frame with plotting info for observation nodes
+#' @param modelroots True if using roots grown by growing degree days
+#' @param root.info Observed root depths if using modelroots=FALSE
+#' @param generalized True if using season start/end dates based on temperature
+#' @param crop.schedule Seeding and harvest dates if generalized=FALSE
+#' @param irrigation.schedule Dates and quantities for irrigation
+#' @param model.number 7= dual porosity, 0= single porosity, 9= dual permeability
+#' @param time.variable TRUE if using multiple vg parameters over time
+#' @param timestep.short TRUE if using atm function that applies irrigation over short time
 #' @param irrigation.time.mins
 #' @param tv.info.all
 #' @param material.number
-#' @param material.divide
+#' @param material.divide minutes pivot is over spot if using timestep.short
 #'
 #' @returns
 #' @export
 #'
 #' @examples
 my.hydrus.run.timevariable <- function(
-    met.data, # dataframe(date, precip, pet, min temp, max temp)
-    model.start1, # date model 1 starts (must be within met.data date range)
-    model.end1, # date model ends 1 (must be within met.data date range)
-    model.start2 = NULL, #date additional model(s) start
-    model.end2 = NULL, #date additional model(s) end
-    vgs, # list of 18 van genuchten parameters; named: thetar,thetas,alpha,n,ksat,l,thetar2,thetas2,alpha2,n2,omega
-    SS.name, # name of scenario set (unique combo of uncertainty paramters, VG etc.)
-    obs9 = obs$depth, #data frame with plotting info for observation nodes
-    modelroots= TRUE, #True if using roots grown by growing degree days
-    root.info= NULL, #Observed root depths if using modelroots=FALSE
-    generalized= TRUE, #True if using season start/end dates based on temperature
-    crop.schedule= NULL, #Seeding and harvest dates if generalized=FALSE
-    irrigation.schedule, #Dates and quantities for irrigation
-    model.number, #7= dual porosity, 0= single porosity, 9= dual permeability
-    time.variable, #TRUE if using multiple vg parameters over time
-    timestep.short= FALSE, #TRUE if using atm function that applies irrigation over short time
+    met.data,
+    model.start1,
+    model.end1,
+    model.start2 = NULL,
+    model.end2 = NULL,
+    vgs,
+    SS.name,
+    obs9 = obs$depth,
+    modelroots= TRUE,
+    root.info= NULL,
+    generalized= TRUE,
+    crop.schedule= NULL,
+    irrigation.schedule,
+    model.number,
+    time.variable,
+    timestep.short= FALSE,
     irrigation.time.mins=NULL,
     tv.info.all= NULL,
     material.number,
-    material.divide) #minutes pivot is over spot if using timestep.short
+    material.divide)
 
 # manual variable definitions for troubleshooting function code
 # met.data = power.long # dataframe(date, precip, pet)
@@ -86,10 +86,12 @@ my.hydrus.run.timevariable <- function(
 
   if(timestep.short == FALSE){
 
-    met.data <- irrigation.atm(met = met.data, generalized = generalized,
+    met.data <- irrigation.atm(met = met.data,
+                               generalized = generalized,
                                crop.schedule = crop.schedule,
                                irrigation.schedule = irrigation.schedule,
-                               modelroots= modelroots, root.info = root.info,
+                               modelroots= modelroots,
+                               root.info = root.info,
                                model.number = model.number)
 
   }
@@ -125,62 +127,7 @@ my.hydrus.run.timevariable <- function(
                                 material.divide = material.divide)
 
   # Create Selector/Run Function ####
-  CreateSelectorAndRun <-
-    function(my.time.int,
-             met.data1,
-             vg,
-             Zf,
-             # rotation_name, # omit for now (2024-10-08)
-             SS.name,
-             model.number,
-             tv.info)
-    {
-      if(length(day.check)!=length(met.data1$Date)+10)
-      {
-        my.time.int = time.int.vector[i]
-        create_selector(met = met.data1,
-                        vg = vg,
-                        time.int = my.time.int,
-                        model.number = model.number,
-                        tv.info= tv.info,
-                        material.number = material.number)
-
-        # Run Hydrus
-
-        if(model.number != 9){
-
-          system("H1D_CALC.EXE", timeout= 600)
-
-        }
-
-        if(model.number == 9){
-
-          system("H1D_Dual.exe", timeout = 600)
-
-        }
-
-
-        my.time <- Sys.time()-60*60*6
-        my.time <- paste0(substr(my.time,1,10),"_",
-                          substr(my.time,12,13),
-                          substr(my.time,15,16),
-                          substr(my.time,18,19))
-        Zf.3digit <- str_pad(string=as.character(Zf), width=3, side="left", pad=0)
-        # my.filename <- paste0(rotation_name,"_",Zf.3digit,"_",SS.name,"_",my.time) # rot name removed
-        my.filename <- paste0(Zf.3digit,"_",SS.name,"_",my.time)
-        # if(!is.na(output.name.override)) # omit for now (2024-10-08)
-        # {
-        #   my.filename <- output.name.override
-        # }
-        print(my.filename)
-        print(my.time.int)
-        day.check <- readLines('./T_Level.out')
-        list.temp <- list(day.check = day.check,
-                          my.time.int = my.time.int,
-                          my.filename = my.filename)
-      }
-      return(list.temp)
-    }
+  ## KF: broke out into own function
 
   # Create SELECTOR.IN and Run Hydrus ####
   # loop through time.int vector to get convergence
