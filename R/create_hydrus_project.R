@@ -131,7 +131,7 @@ create_hydrus_project <- function(project_name,
   file.create(project_dat_file)
 
   # if description is NULL, then use project name as description
-  description <- ifelse(is.null(description), paste("project title", project_name), description)
+  description <- ifelse(is.null(description), paste("project name", project_name), description)
 
   dat_file_contents <- c(";", "[Main]", dat_file_main_args,
                          ";", "[Profile]", dat_file_profile_args)
@@ -140,7 +140,7 @@ create_hydrus_project <- function(project_name,
   cat("New HYDRUS project created in", project_path)
 
   return(list(project_name = project_name,
-                       parent_dir = parent_dir,
+                       project_path = project_path,
                        # class = "runhydrus_model",
                        hydrus_version = hydrus_version,
                        description = description,
