@@ -2,7 +2,7 @@
 
 if(model %in% c(0, 3)){
   # VGM
-  if(is.null(hysteresis)){
+  if(hysteresis == 0){
     sand <- data.frame(theta_r = 0.045,
                        theta_s = 0.43,
                        alpha = 0.145,

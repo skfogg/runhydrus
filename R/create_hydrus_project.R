@@ -19,7 +19,7 @@
 #' @param material_numbers Integer indicating the number of materials in model. Default 1.
 #' @param subregion_numbers Integer indicating the number of subregions in model. Default 0.
 #' @param number_solutes Integer indicating the number of solutes in simulation.
-#' @param initial_condition ?
+#' @param initial_condition Logical. Initial conditions in pressure heads (FALSE; default) or water contents (TRUE).
 #' @param number_of_nodes Integer indicating the number of model nodes. Default 101.
 #' @param profile_depth Numeric indicating the depth of the soil profile. Default 100.
 #' @param observation_nodes Integer indicating the number of observation nodes. If NULL, then the number of model nodes is used.
@@ -140,29 +140,29 @@ create_hydrus_project <- function(project_name,
   cat("New HYDRUS project created in", project_path)
 
   return(list(project_name = project_name,
-                       project_path = project_path,
-                       # class = "runhydrus_model",
-                       hydrus_version = hydrus_version,
-                       description = description,
-                       discritization = c(time_unit = time_unit,
-                                          space_unit = space_unit),
-                       observations = c(print_times = print_times,
-                                        observation_nodes = NULL),
-                       processes = c(water_flow = TRUE,
-                                     solute_transport = FALSE,
-                                     unsatchem = FALSE,
-                                     HP1 = FALSE,
-                                     heat_transport = FALSE,
-                                     equilibrium_adsorption = FALSE,
-                                     mobile_immobile = FALSE,
-                                     root_water_uptake = FALSE,
-                                     root_growth = FALSE),
-                       geometry = c(material_numbers = 1,
-                                    subregion_numbers = 0,
-                                    number_of_nodes = 101,
-                                    profile_depth = 100),
-                       number_solutes = 0,
-                       initial_condition = FALSE
+              project_path = project_path,
+              # class = "runhydrus_model",
+              hydrus_version = hydrus_version,
+              description = description,
+              discritization = list(time_unit = time_unit,
+                                    space_unit = space_unit),
+              observations = list(print_times = print_times,
+                                  observation_nodes = observation_nodes),
+              processes = list(water_flow = water_flow,
+                               solute_transport = solute_transport,
+                               unsatchem = unsatchem,
+                               HP1 = HP1,
+                               heat_transport = heat_transport,
+                               equilibrium_adsorption = equilibrium_adsorption,
+                               mobile_immobile = mobile_immobile,
+                               root_water_uptake = root_water_uptake,
+                               root_growth = root_growth),
+              geometry = list(material_numbers = material_numbers,
+                              subregion_numbers = subregion_numbers,
+                              number_of_nodes = number_of_nodes,
+                              profile_depth = profile_depth),
+              number_solutes = number_solutes,
+              initial_condition = initial_condition
   ))
 
 
