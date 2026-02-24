@@ -101,7 +101,23 @@ create_selector_in <- function(hydrus_model,
                                                      lower_bc = "free_drainage",
                                                      triggered_irrigation = FALSE),
                                particle_tracking_params = list(init_water_storage = 2,
-                                                            cumulative_surface_flux = 2)
+                                                            cumulative_surface_flux = 2),
+                               time_parameters = list(initial_time_step = 0.001,
+                                                      minimum_time_step = 1e-05,
+                                                      maximum_time_step = 5,
+                                                      lower_time_step_mult = 1.3,
+                                                      upper_time_step_mult = 0.7,
+                                                      lower_optim_iter_range = 3,
+                                                      upper_optim_iter_range = 7,
+                                                      initial_model_time = 0,
+                                                      final_model_time = 100),
+                               print_options = list(print_times = data.frame(times = c(100)),
+                                                    interval_output_option = FALSE,
+                                                    interval_output = 0.001,
+                                                    print_time_information = TRUE,
+                                                    time_info_print_every_n_time_steps = 1)
+
+
                                ){
   require(stringr)
   bottom_bc_opts <- readRDS("data/bottom_bc_opts.rds")
@@ -391,11 +407,24 @@ create_selector_in <- function(hydrus_model,
 
 
 
-  ## *** BLOCK C: TIME INFORMATION ***
-  # lPrintD
-  # nPrintSteps
-  # tPrintInterval
-  # lEnter = Press Enter at the End (default on)
+
+
+
+
+  #### *** BLOCK C: TIME INFORMATION *** ####
+  block_c_time_info(hydrus_model,
+                    time_parameters = time_parameters,
+                    print_options = print_options)
+
+  #### *** BLOCK D: ROOT GROWTH INFORMATION *** ####
+
+  #### *** BLOCK E: HEAT TRANSPORT INFORMATION *** ####
+
+  #### *** BLOCK F: SOLUTE TRANSPORT INFORMATION *** ####
+
+  #### **** BLOCK G: ROOT WATER UPTAKE INFORMATION *** ####
+
+
 
   ## *** BLOCK F: SOLUTE TRANSPORT INFORMATION ***
 
@@ -475,3 +504,20 @@ create_selector_in <- function(hydrus_model,
 ## only when hystersis turned on:
 # Kappa = -1 initially drying curve
 # Kappa = 1 initially wetting curve
+
+## BLOCK C
+# dt = initial time step
+# dtMin = minimum time step
+# dtMax = maximum time step
+# DMul = lower time step multiplication factor
+# DMul2 = upper time step multiplication factor
+# ItMin = lower optimal iteration range
+# ItMax = upper optimal iteration range
+# MPL = max print length (?): number of time steps to print out (n_print)
+# tInit = initial time
+# tMax = final time
+
+# lPrintD = interval output option (t), otherwise f
+# nPrintSteps = T-level information Every n time steps
+# tPrintInterval = time interval for interval output option
+# lEnter = Press Enter at the End (default on, t)

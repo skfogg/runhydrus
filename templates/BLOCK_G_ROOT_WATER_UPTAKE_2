@@ -1,0 +1,6 @@
+*** BLOCK G: ROOT WATER UPTAKE INFORMATION *****************************
+     Model  (0 - Feddes, 1 - S shape)  cRootMax    OmegaC
+        2                                   1
+  lHydRed       P3
+        f     -8000
+*** END OF INPUT FILE 'SELECTOR.IN' ************************************

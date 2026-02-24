@@ -1,0 +1,9 @@
+*** BLOCK D: ROOT GROWTH INFORMATION ***********************************
+iRootDepthEntry
+        1
+ nGrowth
+       2
+      Time  RootDepth
+        50         30 
+       100         30 
+*** END OF INPUT FILE 'SELECTOR.IN' ************************************

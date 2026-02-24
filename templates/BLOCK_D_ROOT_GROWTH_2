@@ -1,0 +1,6 @@
+*** BLOCK D: ROOT GROWTH INFORMATION ***********************************
+iRootDepthEntry
+        2
+     iRFak     tRMin     tRMed     tRMax     xRMin     xRMed     xRMax   tPeriod
+        0         0        45       100      0.01        22        90      365
+*** END OF INPUT FILE 'SELECTOR.IN' ************************************
