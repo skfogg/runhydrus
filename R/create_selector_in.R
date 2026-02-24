@@ -110,7 +110,7 @@ create_selector_in <- function(hydrus_model,
                                                       lower_optim_iter_range = 3,
                                                       upper_optim_iter_range = 7,
                                                       initial_model_time = 0,
-                                                      final_model_time = 100),
+                                                      final_model_time = 100)
                                # print_options = list(print_times = data.frame(times = c(100)),
                                #                      interval_output_option = FALSE,
                                #                      interval_output = 0.001,
@@ -159,22 +159,26 @@ create_selector_in <- function(hydrus_model,
         stop("Error in soil_hydraulic_parameters: Soil hydraulic model is 0 or 3 with hysteresis. Required parameters are: 'theta_r', 'theta_s', 'alpha', 'n', 'K_s', 'l', 'theta_m', 'theta_sW', 'alphaW', 'K_sW.")
       }
     }
-  }if(soil_hydraulic_model == 1){
+  }
+  if(soil_hydraulic_model == 1){
     # modified VGM
     if(!all(names(soil_hydraulic_parameters) %in% c("theta_r", "theta_s", "alpha", "n", "K_s", "l", "theta_m", "theta_a", "theta_k", "K_k"))){
       stop("Error in soil_hydraulic_parameters: Soil hydraulic model is 1 (modified van Genuchten). Required parameters are: 'theta_r', 'theta_s', 'alpha', 'n', 'K_s', 'l', 'theta_m', 'theta_a', 'theta_k', 'K_k.")
     }
-  }if(soil_hydraulic_model == 2){
+  }
+  if(soil_hydraulic_model == 2){
     # Brooks-Corey
     if(!all(names(soil_hydraulic_parameters) %in% c("theta_r", "theta_s", "alpha", "n", "K_s", "l"))){
       stop("Error in soil_hydraulic_parameters: Soil hydraulic model is 2 (Brooks-Corey). Required parameters are: 'theta_r', 'theta_s', 'alpha', 'n', 'K_s', and 'l'.")
     }
-  }if(model == 4){
+  }
+  if(model == 4){
     # Kosugi
     if(!all(names(soil_hydraulic_parameters) %in% c("theta_r", "theta_s", "alpha", "n", "K_s", "l"))){
       stop("Error in soil_hydraulic_parameters: Soil hydraulic model is 4 (Kosugi). Required parameters are: 'theta_r', 'theta_s', 'alpha', 'n', 'K_s', and 'l'.")
     }
-  }if(model == -4){
+  }
+  if(model == -4){
     # Kosugi + Brunswick modification
     if(!all(names(soil_hydraulic_parameters) %in% c("theta_r", "theta_s", "alpha", "n", "K_s", "l", "K_s_ncap", "aFilm", "f0", "hr"))){
       stop("Error in soil_hydraulic_parameters: Soil hydraulic model is -4 (Kosugi with Brunswick modification). Required parameters are: 'theta_r', 'theta_s', 'alpha', 'n', 'K_s', 'l', 'K_s_ncap', 'aFilm', 'f0', and 'hr'.")
@@ -212,34 +216,34 @@ create_selector_in <- function(hydrus_model,
 
 
 
-
-  #### *** BLOCK C: TIME INFORMATION *** ####
-  block_c_time_info(hydrus_model,
-                    time_parameters = time_parameters,
-                    print_options = print_options)
-
-  #### *** BLOCK D: ROOT GROWTH INFORMATION *** ####
-  block_d_root_growth_info(hydrus_model,
-                           root_growth_depth = 0,
-                           root_growth_params = NULL,
-                           root_growth_factor = NULL)
-
-  #### *** BLOCK E: HEAT TRANSPORT INFORMATION *** ####
-
-  #### *** BLOCK F: SOLUTE TRANSPORT INFORMATION *** ####
-
-  #### **** BLOCK G: ROOT WATER UPTAKE INFORMATION *** ####
-  block_g_root_water_uptake_info(hydrus_model,
-                                 root_water_uptake_model = 0,
-                                 root_water_uptake_params = data.frame(critical_stress_index = 1,
-                                                                       P0 = -10,
-                                                                       POpt = -25,
-                                                                       P2H = -200,
-                                                                       P2L = -800,
-                                                                       P3 = -8000,
-                                                                       r2H = 0.5,
-                                                                       r2L = 0.1))
-
+#
+#   #### *** BLOCK C: TIME INFORMATION *** ####
+#   block_c_time_info(hydrus_model,
+#                     time_parameters = time_parameters,
+#                     print_options = print_options)
+#
+#   #### *** BLOCK D: ROOT GROWTH INFORMATION *** ####
+#   block_d_root_growth_info(hydrus_model,
+#                            root_growth_depth = 0,
+#                            root_growth_params = NULL,
+#                            root_growth_factor = NULL)
+#
+#   #### *** BLOCK E: HEAT TRANSPORT INFORMATION *** ####
+#
+#   #### *** BLOCK F: SOLUTE TRANSPORT INFORMATION *** ####
+#
+#   #### **** BLOCK G: ROOT WATER UPTAKE INFORMATION *** ####
+#   block_g_root_water_uptake_info(hydrus_model,
+#                                  root_water_uptake_model = 0,
+#                                  root_water_uptake_params = data.frame(critical_stress_index = 1,
+#                                                                        P0 = -10,
+#                                                                        POpt = -25,
+#                                                                        P2H = -200,
+#                                                                        P2L = -800,
+#                                                                        P3 = -8000,
+#                                                                        r2H = 0.5,
+#                                                                        r2L = 0.1))
+#
 
 
 }

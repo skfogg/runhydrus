@@ -51,7 +51,7 @@ create_hydrus_project <- function(project_name,
   file.create(file.path(project_path, "SELECTOR.IN"))
 
   ## Get a basic SELECTOR.IN template and write to SELECTOR.IN file in project
-  selector_template <- readLines(file("./templates/basic/SELECTOR.IN"))
+  selector_template <- readLines(file("./templates/SELECTOR.IN"))
   write(selector_template, file = selector_in_file)
 
   ## update file version to match hydrus version

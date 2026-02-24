@@ -6,7 +6,7 @@ top_bc_opts <- data.frame(top_bc_name = c("constant_pressure_head", "constant_fl
                           WLayer = c("f","f","t","f","f","f"),
                           KodTop = c("1","-1","-1","-1","1","0"),
                           InitCond = c("f","f","f","f","f","f"))
-saveRDS(top_bc_opts, "data/top_bc_opts.rds")
+# saveRDS(top_bc_opts, "data/top_bc_opts.rds")
 
 ## BotInf qGWLF FreeD SeepF KodBot DrainF hSeep
 
@@ -20,7 +20,7 @@ bottom_bc_opts <- data.frame(bottom_bc_name = c("contant_pressure_head", "contan
                              KodBot = c(" ","-"," ","-","-","-","-","-"),
                              DrainF = c("f","f","f","f","f","f","f","t"),
                              hSeep = c("0","0","0","0","0","0","0","0"))
-saveRDS(bottom_bc_opts, "data/bottom_bc_opts.rds")
+# saveRDS(bottom_bc_opts, "data/bottom_bc_opts.rds")
 
 
 # "constant_pressure_head" = c(f,f,f,f,1,f,0)
