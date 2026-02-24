@@ -99,7 +99,7 @@ parameterize_hydrus_model <- function(hydrus_project,
   ## Read in requirements
   require(stringr)
 
-  source("R/edit_data_file.R")
+  # source("R/edit_data_file.R")
   source("R/block_a_basic_info.R")
   source("R/block_b_water_flow_info.R")
   source("R/block_c_time_info.R")
