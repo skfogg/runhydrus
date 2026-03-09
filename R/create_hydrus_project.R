@@ -1,14 +1,29 @@
 #' Initiates a HYDRUS project
 #'
-#' @param project_name Name of the HYDRUS project to create
-#' @param parent_dir Path to the project folder
-#' @param hydrus_version Integer indicating which HYDRUS version to use. Must be version 4 or 5.
-#' @param description Optional project description character string
+#' Creates a project directory with necessary input files. Returns a default HYDRUS model for further editing.
 #'
-#' @returns an object of hydrus_project class with all model info set
+#' @usage create_hydrus_project(
+#'  project_name,
+#'  parent_dir,
+#'  hydrus_version = 5,
+#'  description = NULL
+#' )
+#'
+#' @param project_name Name of the HYDRUS project to create.
+#' @param parent_dir Path to the project folder.
+#' @param hydrus_version Integer indicating which HYDRUS version to use. Must be version 4 or 5.
+#' @param description Optional project description character string.
+#'
+#' @returns Function returns the default HYDRUS model. Editing of the default model should be done with \code{\link{parameterize_hydrus_model}}.
+#' Set parameters using \code{\link{main_processes}}, \code{\link{model_units}}, \code{\link{geometry}}, \code{\link{print_options}},
+#' \code{\link{time_parameters}}, \code{\link{time_variable_bc}}, \code{\link{iteration_criteria}}, \code{\link{soil_hydraulics}},
+#' \code{\link{water_flow_bcs}}, \code{\link{root_water_uptake}}, \code{\link{root_growth}}, \code{\link{solute_options}}, and \code{\link{particle_tracking}}.
 #' @export
 #'
-#' @examples
+#' @examples create_hydrus_project(project_name = "Test Project",
+#'                                 parent_dir = getwd(),
+#'                                 hydrus_version = 5,
+#'                                 description = "This is a test project.")
 create_hydrus_project <- function(project_name,
                                   parent_dir,
                                   hydrus_version = 5,
@@ -20,11 +35,12 @@ create_hydrus_project <- function(project_name,
 
   if(dir.exists(project_path)) {
 
-    dir_answer <- readline(prompt = paste("Folder",
-                                          project_name,
-                                          "already exists in project directory. All files will be deleted in",
-                                          project_name,
-                                          ". Proceed? y/n \n"))
+    # cat(paste0("Folder ",
+    #            project_name,
+    #            " already exists in project directory.\n All files will be over-wrtten in ",
+    #            project_name, "."))
+    # dir_answer <- readline(prompt = "Proceed? Y/N: ")
+    dir_answer <- readline(prompt = paste0("Project ", project_name, " already exists. All files will be over-written. Proceed? y/n \n"))
     dir_answer <- substr(toupper(dir_answer), start = 1, stop = 1)
 
     if(dir_answer == "Y") {
@@ -50,21 +66,59 @@ create_hydrus_project <- function(project_name,
   ## Create empty SELECTOR.IN file in the project path
   file.create(file.path(project_path, "SELECTOR.IN"))
 
-  ## Get a basic SELECTOR.IN template and write to SELECTOR.IN file in project
+  ## Create empty PROFILE.DAT file in the project path
+  file.create(file.path(project_path, "PROFILE.DAT"))
+
+  ## Create SolverLog.err in project path
+  file.create(file.path(project_path, "SolverLog.err"))
+
+  ## Create directories:
+  extra_directories <- list("Furrow", "Genex", "Genex_Tmp", "H_Compounds", "H_Grids",
+                         "H_VerData", "H_VTK", "Slope", "Textures")
+  lapply(extra_directories, function(x) dir.create(paste0(project_path, "/", x)))
+
+  ## Get a basic templates
   selector_template <- readLines(file("./templates/SELECTOR.IN"))
-  write(selector_template, file = selector_in_file)
+  profile_template <- readLines(file("./templates/PROFILE.DAT"))
 
   ## update file version to match hydrus version
   selector_template[1] <- paste0("Pcp_File_Version=", hydrus_version)
+  profile_template[1] <- paste0("Pcp_File_Version=", hydrus_version)
+
+  ## Write out updated templates to correct files:
+  write(selector_template, file = file.path(project_path, "SELECTOR.IN"))
+  write(profile_template, file = file.path(project_path, "PROFILE.DAT"))
+
+  Sys.chmod(file.path(project_path, "PROFILE.DAT"), mode = "0777")
 
   cat("New HYDRUS project created in", project_path)
 
-  return(list(project_name = project_name,
-              project_path = project_path,
-              # class = "hydrus_project",
-              hydrus_version = hydrus_version,
-              description = description))
+  # return(list(project_name = project_name,
+  #             project_path = project_path,
+  #             hydrus_version = hydrus_version,
+  #             description = description))
 
+  ## CREATE default model that can be edited
+  hydrus_model <- list(hydrus_project = list(project_name = project_name,
+                                             project_path = project_path,
+                                             hydrus_version = hydrus_version,
+                                             description = description),
+                       main_processes = main_processes(),
+                       model_units = model_units(),
+                       geometry = geometry(),
+                       print_options = print_options(),
+                       time_parameters = time_parameters(),
+                       time_variable_bc = time_variable_bc(),
+                       iteration_criteria = iteration_criteria(),
+                       soil_hydraulics = soil_hydraulics(),
+                       water_flow_bcs = water_flow_bcs(),
+                       root_water_uptake = root_water_uptake(),
+                       root_growth = root_growth(),
+                       solute_options = solute_options(),
+                       particle_tracking = particle_tracking())
+  class(hydrus_model) <- c("hydrus_model", class(hydrus_model))
+
+  return(hydrus_model)
 }
 
 # @param time_unit Character string indicating the temporal unit. Must be "seconds", "minutes", "hours", "days", or "years".

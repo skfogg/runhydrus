@@ -1,0 +1,55 @@
+Pcp_File_Version=5
+*** BLOCK A: BASIC INFORMATION *****************************************
+Heading
+Replicate Fairfield duel perm model using runhydrus
+LUnit  TUnit  MUnit  (indicated units are obligatory for all input data)
+cm
+days
+mmol
+lWat   lChem lTemp  lSink lRoot lShort lWDep lScreen lVariabBC lEquil lInverse
+ t     f     f      t     t     f      f     t       t         f         f
+lSnow  lHP1   lMeteo  lVapor lActiveU lFluxes lIrrig  lPart   lCosmic lDummy
+ f       f       t       f       f       t       f       f       f       f
+NMat    NLay  CosAlpha
+  3       1       1
+*** BLOCK B: WATER FLOW INFORMATION ************************************
+MaxIt   TolTh   TolH       (maximum number of iterations and tolerances)
+  10    0.001      1
+TopInf WLayer KodTop InitCond
+ t     f      -1       f
+BotInf qGWLF FreeD SeepF KodBot DrainF  hSeep
+ f     f     t     f     -1      f      0
+    hTab1   hTabN
+     1e-06   10000
+    Model   Hysteresis
+      8          0
+   thr     ths    Alfa      n         Ks       l
+  0.0792      0.47      0.03      1.35      6      0.5
+  0.0813      0.4231      0.019      1.45      8      0.5
+  0.05      0.37      0.0353      3.18      642.98      0.5
+  thrFr   thsFr  AlfaFr     nFr       KsFr     lFr       W    beta   gamma       a        Ka
+  0.01298      0.43903      0.017304      1.3202      289.89      0.5      0.04      4.74      0.01      2.197      1.4143
+  0      0.3      0.079      1.6      75.5      0.5      0.04      2      0.4      7.8      0.01
+  0.01      0.8      0.01      1.01      386.52      0.5      0.04      1      0.4      10      1.497
+     qTop
+      0.15
+*** BLOCK C: TIME INFORMATION ******************************************
+        dt       dtMin       dtMax     DMul    DMul2  ItMin ItMax  MPL
+      0.001       1e-05           5     1.3     0.7     3     7     1
+      tInit        tMax
+          0         861
+  lPrintD  nPrintSteps tPrintInterval lEnter
+     f           1             1       t
+TPrint(1),TPrint(2),...,TPrint(MPL)
+         861         
+*** BLOCK D: ROOT GROWTH INFORMATION ***********************************
+iRootDepthEntry
+        2
+     iRFak     tRMin     tRMed     tRMax     xRMin     xRMed     xRMax   tPeriod
+        1        115        0        245        0        0        60        365
+*** BLOCK G: ROOT WATER UPTAKE INFORMATION *****************************
+     Model  (0 - Feddes, 1 - S shape)  cRootMax    OmegaC
+        1                                    1            
+       h50       P3
+      -800      3
+*** END OF INPUT FILE 'SELECTOR.IN' ************************************

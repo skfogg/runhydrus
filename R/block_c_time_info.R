@@ -14,62 +14,64 @@
 #' information (default on, TRUE). 'time_info_print_every_n_time_steps', default 1, print time interval.
 #'
 #'
-#' @param hydrus_project a hydrus project object created with
-#'   'create_hydrus_project'
-#' @param time_parameters list of time parameters, see details.
-#' @param print_options list of print options, see details.
+#' @param hydrus_model a hydrus model created with \code{\link{create_hydrus_project}}
 #'
-#' @returns
+#' @returns edits BLOCK C of SELECTOR.IN
 #' @export
 #'
-#' @examples
-block_c_time_info <- function(hydrus_project,
-                              time_parameters = time_parameters,
-                              print_options = print_options){
+#' @import stringr
+#'
+#' @examples block_c_time_info(hydrus_project, time_parameters = time_parameters, print_options = print_options)
+block_c_time_info <- function(hydrus_model
+                              # time_parameters = time_parameters,
+                              # print_options = print_options
+                              ){
 
-  selector_template <- readLines(file.path(hydrus_project$project_path, "SELECTOR.IN"))
+
+  selector_template <- readLines(file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))
 
   #### *** BLOCK C: TIME INFORMATION *** ####
   # dt  dtMin  dtMax  DMul  DMul2  ItMin   ItMax  MPL
   selector_template[grep("dt", selector_template) + 1] <- str_flatten(c(rep(" ", times = 6),
-                                                                        time_parameters$initial_time_step,
+                                                                        hydrus_model$time_parameters$initial_time_step,
                                                                         rep(" ", times = 7),
-                                                                        time_parameters$minimum_time_step,
+                                                                        hydrus_model$time_parameters$minimum_time_step,
                                                                         rep(" ", times = 11),
-                                                                        time_parameters$maximum_time_step,
+                                                                        hydrus_model$time_parameters$maximum_time_step,
                                                                         rep(" ", times = 5),
-                                                                        time_parameters$lower_time_step_mult,
+                                                                        hydrus_model$time_parameters$lower_time_step_mult,
                                                                         rep(" ", times = 5),
-                                                                        time_parameters$upper_time_step_mult,
+                                                                        hydrus_model$time_parameters$upper_time_step_mult,
                                                                         rep(" ", times = 5),
-                                                                        time_parameters$lower_optim_iter_range,
+                                                                        hydrus_model$time_parameters$lower_optim_iter_range,
                                                                         rep(" ", times = 5),
-                                                                        time_parameters$upper_optim_iter_range,
+                                                                        hydrus_model$time_parameters$upper_optim_iter_range,
                                                                         rep(" ", times = 5),
-                                                                        nrow(print_options$times_to_print)))
+                                                                        nrow(hydrus_model$print_options$times_to_print)))
   # tInit  tMax
   selector_template[grep("tInit", selector_template) + 1] <- str_flatten(c(rep(" ", times = 10),
-                                                                           time_parameters$initial_model_time,
+                                                                           hydrus_model$time_parameters$initial_model_time,
                                                                            rep(" ", times = 9),
-                                                                           time_parameters$final_model_time))
+                                                                           hydrus_model$time_parameters$final_model_time))
 
   # lPrintD  nPrintSteps  tPrintInterval  lEnter
   selector_template[grep("lPrintD", selector_template) + 1] <- str_flatten(c(rep(" ", times = 5),
-                                                                             ifelse(print_options$interval_output_option, "t", "f"),
+                                                                             ifelse(hydrus_model$print_options$interval_output_option, "t", "f"),
                                                                              rep(" ", times = 11),
-                                                                             print_options$time_info_print_every_n_time_steps,
-                                                                             rep(" ", times = 9),
-                                                                             print_options$interval_output,
-                                                                             ifelse(hydrus_project$observations$print_times, "t", "f")))
+                                                                             hydrus_model$print_options$time_info_print_every_n_time_steps,
+                                                                             rep(" ", times = 13),
+                                                                             hydrus_model$print_options$interval_output,
+                                                                             rep(" ", times = 7),
+                                                                             ifelse(hydrus_model$print_options$print_times, "t", "f")))
 
   # TPrint(1),TPrint(2),...,TPrint(MPL)
   selector_template[grep("TPrint", selector_template) + 1] <- str_flatten(c(rep(" ", times = 9),
-                                                                            as.character(print_options$times_to_print$times)),
-                                                                          collapse = "         ")
+                                                                          paste0(as.character(hydrus_model$print_options$times_to_print$times)),
+                                                                          collapse = "         "))
 
   ## Update SELECTOR.IN
-  writeLines(selector_template, file.path(hydrus_project$project_path, "SELECTOR.IN"))
-  cat("Updated BLOCK C: TIME INFORMATION of SELECTOR.IN file.")
+  writeLines(selector_template, file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))
+  cat("Updated BLOCK C: TIME INFORMATION of SELECTOR.IN file... \n")
 
 }
 

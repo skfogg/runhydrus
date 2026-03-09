@@ -1,0 +1,23 @@
+ ******* Program HYDRUS
+ ******* 
+ Replicate Fairfield duel perm model using runhydrus                     
+ Date:   8. 3.2026    Time:  20:55:20
+ Units: L = cm   , T = days , M = mmol 
+
+-----------------------------------------------------
+ Time       [T]      0.0000
+-----------------------------------------------------
+ Sub-region num.                   1
+-----------------------------------------------------
+ Length   [L]       -0.175E+03 -0.175E+03
+ W-volume [L]       -0.492E+02 -0.492E+02
+ In-flow  [L/T]      0.000E+00  0.000E+00
+ h Mean   [L]        0.306E+05  0.306E+05
+ W-volumeF[L]       -0.208E+01 -0.208E+01
+ In-flowF [L/T]      0.000E+00  0.000E+00
+ h MeanF  [L]        0.306E+05  0.306E+05
+ Top Flux [L/T]     -0.317E-02
+ Bot Flux [L/T]     -0.317E-02
+-----------------------------------------------------
+ 
+ Calculation time [sec]  9.999990463256836E-003

@@ -1,0 +1,6 @@
+Must have HYDRUS installed on computer and allow all users Full control permissions.
+The script 'shell_permissions.ps1' must be run in a windows power shell using 'run as administrator'.
+To do so, first edit the shell_permissions script to the Bin directory of HYDRUS,
+cd to the project directory of the runhydrus package, and run .\shell_permissions.ps1.
+You can use: Get-Acl "C:\Path\To\HYDRUS\Bin" to check to see if the Access was changed
+  to "Everyone Allow Full Control..."

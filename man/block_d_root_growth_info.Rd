@@ -4,18 +4,17 @@
 \alias{block_d_root_growth_info}
 \title{Set Block D of SELECTOR.IN: Root Growth Information}
 \usage{
-block_d_root_growth_info(hydrus_project, root_growth = root_growth)
+block_d_root_growth_info(hydrus_model)
 }
 \arguments{
-\item{hydrus_project}{a hydrus project object created with
-'create_hydrus_project'}
-
-\item{root_growth_depth}{how root growth should be specified. See details for options. Default '0', root depth specified using time-variable boundary conditions.}
-
-\item{root_growth_params}{data.frame of parameters for the root growth specification. Default NULL because no additional parameters when root_growth_depth = 0.}
-
-\item{root_growth_factor}{either '0' for root growth factor from given data or '1' for a root growth factor of 50% after 50% growing season.}
+\item{hydrus_model}{a hydrus model created with \code{\link{create_hydrus_project}}}
+}
+\value{
+edits BLOCK D of SELECTOR.IN
 }
 \description{
 Set Block D of SELECTOR.IN: Root Growth Information
+}
+\examples{
+block_d_root_growth_info(hydrus_project, root_growth)
 }

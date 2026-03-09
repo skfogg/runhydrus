@@ -1,104 +1,116 @@
-block_a_basic_info <- function(hydrus_model,
-                               main_processes = main_processes,
-                               units = units,
-                               print_options = print_options
+#' Update Block A of SELECTOR.IN: Basic Information
+#'
+#' @param hydrus_model a hydrus model created with \code{\link{create_hydrus_project}}
+#'
+#' @returns Edits BLOCK A of SELECTOR.IN file associated with the input hydrus_model
+#' @export
+#'
+#' @examples block_a_basic_info(hydrus_model)
+#'
+#' @import stringr
+block_a_basic_info <- function(hydrus_model){
 
-){
+  # Uses main_processes, model_units, print_options, time_variable_bc, solute_options, root_water_uptake, water_flow_bcs, geometry
 
   ## Get SELECTOR.IN file of project
-  selector_template <- readLines(file.path(hydrus_model$project_path, "SELECTOR.IN"))
+  selector_template <- readLines(file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))
 
   #### *** BLOCK A: BASIC INFORMATION *** ####
   ## insert project description
-  selector_template[4] <- hydrus_model$description
+  selector_template[grep("Heading", selector_template) + 1] <- ifelse(is.null(hydrus_model$hydrus_project$description),
+                                                                      paste("project name",
+                                                                            hydrus_model$hydrus_project$project_name),
+                                                                      hydrus_model$hydrus_project$description)
 
   ## length unit, time unit, mass unit
-  selector_template[grep("LUnit", selector_template) + 1] <- units$space_unit
-  selector_template[grep("LUnit", selector_template) + 2] <- units$time_unit
-  selector_template[grep("LUnit", selector_template) + 3] <- ifelse(is.null(units$mass_unit), "-", units$mass_unit)
+  selector_template[grep("LUnit", selector_template) + 1] <- hydrus_model$model_units$space_unit
+  selector_template[grep("LUnit", selector_template) + 2] <- hydrus_model$model_units$time_unit
+  selector_template[grep("LUnit", selector_template) + 3] <- ifelse(is.null(hydrus_model$model_units$mass_unit),
+                                                                    "-",
+                                                                    hydrus_model$model_units$mass_unit)
 
   ## Start with all model options turned off:
-  basic_opt_1 <- data.frame(keyword = str_split(selector_template[9], " {1,}", simplify = T)[1,],
-                            idx_loc = sort(unique(unlist(str_locate_all(selector_template[10], c("t", "f"))))),
+  basic_opt_1 <- data.frame(keyword = stringr::str_split(selector_template[grep("lWat", selector_template)], " {1,}", simplify = T)[1,],
+                            idx_loc = sort(unique(unlist(str_locate_all(selector_template[grep("lWat", selector_template)+1], c("t", "f"))))),
                             on = "f")
-  basic_opt_2 <- data.frame(keyword = str_split(selector_template[11], " {1,}", simplify = T)[1,],
-                            idx_loc = sort(unique(unlist(str_locate_all(selector_template[12], c("t", "f"))))),
+  basic_opt_2 <- data.frame(keyword = stringr::str_split(selector_template[grep("lSnow", selector_template)], " {1,}", simplify = T)[1,],
+                            idx_loc = sort(unique(unlist(str_locate_all(selector_template[grep("lSnow", selector_template)+1], c("t", "f"))))),
                             on = "f")
 
   # Turn on options based on processes set in create_hydrus_project()
   ## First line:
 
   # Print option: Screen output is on by default:
-  if(print_options$screen_output){
+  if(hydrus_model$print_options$screen_output){
     basic_opt_1[basic_opt_1$keyword == "lScreen","on"] <- "t"
   }
 
-  if(hydrus_model$processes$water_flow){
+  if(hydrus_model$main_processes$water_flow){
     basic_opt_1[basic_opt_1$keyword == "lWat","on"] <- "t"
   }
-  if(hydrus_model$processes$solute_transport){
+  if(hydrus_model$main_processes$solute_transport){
     basic_opt_1[basic_opt_1$keyword == "lChem","on"] <- "t"
   }
-  if(hydrus_model$processes$heat_transport){
+  if(hydrus_model$main_processes$heat_transport){
     basic_opt_1[basic_opt_1$keyword == "lTemp","on"] <- "t"
     basic_opt_1[basic_opt_1$keyword == "lScreen","on"] <- "f"
   }
-  if(hydrus_model$processes$root_water_uptake){
+  if(hydrus_model$main_processes$root_water_uptake){
     basic_opt_1[basic_opt_1$keyword == "lSink","on"] <- "t"
   }
-  if(hydrus_model$processes$root_growth){
+  if(hydrus_model$main_processes$root_growth){
     basic_opt_1[basic_opt_1$keyword == "lRoot","on"] <- "t"
   }
-  if(time_var_bc){
+  if(hydrus_model$time_variable_bc$time_variable_bc){
     basic_opt_1[basic_opt_1$keyword == "lVariabBC","on"] <- "t"
   }
-  if(solute_transport_model$equilibrium){
+  if(hydrus_model$solute_options$standard_solute_transport){
     basic_opt_1[basic_opt_1$keyword == "lEquilib","on"] <- "t"
   }
-  if(inverse){
+  if(hydrus_model$main_processes$inverse){
     basic_opt_1[basic_opt_1$keyword == "lInverse", "on"] <- "t"
   }
 
   ## Second line:
   ## Print option: print fluxes is on by default unless heat transport is specified:
-  if(print_options$print_fluxes_not_temp){
+  if(hydrus_model$print_options$print_fluxes_not_temp){
     basic_opt_2[basic_opt_2$keyword == "lFluxes","on"] <- "t"
   }
-  if(hydrus_model$processes$heat_transport){
+  if(hydrus_model$main_processes$heat_transport){
     basic_opt_2[basic_opt_2$keyword == "lFluxes","on"] <- "f"
   }
 
-  if(snow_hydrology){
-    basic_opt_2[basic_opt_2$keyword == "lSnow"] <- "t"
+  if(hydrus_model$main_processes$snow_hydrology){
+    basic_opt_2[basic_opt_2$keyword == "lSnow", "on"] <- "t"
   }
-  if(hydrus_model$processes$HP1){
+  if(hydrus_model$main_processes$HP1){
     basic_opt_1[basic_opt_1$keyword == "lChem","on"] <- "t"
     basic_opt_2[basic_opt_2$keyword == "lHP1","on"] <- "t"
   }
-  if(meteorological_data){
-    basic_opt_2[basic_opt_2$keyword == "lMeteo"] <- "t"
+  if(hydrus_model$time_variable_bc$meteorological_data){
+    basic_opt_2[basic_opt_2$keyword == "lMeteo", "on"] <- "t"
   }
-  if(vapor_flow){
-    basic_opt_2[basic_opt_2$keyword == "lVapor"] <- "t"
+  if(hydrus_model$main_processes$vapor_flow){
+    basic_opt_2[basic_opt_2$keyword == "lVapor", "on"] <- "t"
   }
-  if(root_water_uptake_opts$active_solute_uptake){
-    basic_opt_2[basic_opt_2$keyword == "lActiveU"] <- "t"
+  if(hydrus_model$root_water_uptake$active_solute_uptake){
+    basic_opt_2[basic_opt_2$keyword == "lActiveU", "on"] <- "t"
   }
 
-  if(water_flow_bcs$triggered_irrigation){
-    basic_opt_2[basic_opt_2$keyword == "lIrrig"] <- "t"
+  if(hydrus_model$water_flow_bcs$triggered_irrigation){
+    basic_opt_2[basic_opt_2$keyword == "lIrrig", "on"] <- "t"
   }
-  if(particle_tracking){
-    basic_opt_2[basic_opt_2$keyword == "lPart"] <- "t"
+  if(hydrus_model$main_processes$particle_tracking){
+    basic_opt_2[basic_opt_2$keyword == "lPart", "on"] <- "t"
   }
 
   ## Properly space the SELECTOR.IN lines
-  opt_1 <- str_split(selector_template[10], "", simplify = TRUE)
+  opt_1 <- str_split(selector_template[grep("lWat", selector_template) + 1], "", simplify = TRUE)
   for(i in 1:nrow(basic_opt_1)){
     opt_1[1, basic_opt_1$idx_loc[i]] <- basic_opt_1$on[i]
   }
 
-  opt_2 <- str_split(selector_template[12], "", simplify = TRUE)
+  opt_2 <- str_split(selector_template[grep("lSnow", selector_template) + 1], "", simplify = TRUE)
   for(i in 1:nrow(basic_opt_2)){
     opt_2[1, basic_opt_2$idx_loc[i]] <- basic_opt_2$on[i]
   }
@@ -108,15 +120,15 @@ block_a_basic_info <- function(hydrus_model,
   selector_template[grep("lSnow", selector_template) + 1] <- str_flatten(opt_2[1,])
 
   ## set the number of materials
-  geometry <- str_split(selector_template[grep("NMat", selector_template) + 1], "", simplify = T)
-  geometry[1,3] <- as.character(geometry$number_materials)
-  geometry[1,11] <- as.character(geometry$number_subregions)
+  geometry_line <- str_split(selector_template[grep("NMat", selector_template) + 1], "", simplify = T)
+  geometry_line[1,3] <- as.character(hydrus_model$geometry$number_materials)
+  geometry_line[1,11] <- as.character(hydrus_model$geometry$number_subregions)
   # CosAlpha is gravity
-  selector_template[grep("NMat", selector_template) + 1] <- str_flatten(geometry)
+  selector_template[grep("NMat", selector_template) + 1] <- str_flatten(geometry_line)
 
 
   ## Update SELECTOR.IN
-  writeLines(selector_template, file.path(hydrus_model$project_path, "SELECTOR.IN"))
-  cat("Updated BLOCK A: BASIC INFORMATION of SELECTOR.IN file.")
+  writeLines(selector_template, file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))
+  cat("Updated BLOCK A: BASIC INFORMATION of SELECTOR.IN file... \n")
 
 }

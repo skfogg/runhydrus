@@ -4,18 +4,28 @@
 \alias{edit_dat_file}
 \title{Title}
 \usage{
-edit_dat_file(
-  hydrus_project,
-  main_processes = main_processes,
-  units = units,
-  geometry = geometry,
-  print_options = print_options,
-  water_flow_bcs = water_flow_bcs
-)
+edit_dat_file(hydrus_model)
 }
 \arguments{
-\item{water_flow_bcs}{}
+\item{hydrus_project}{a hydrus project object created with
+'create_hydrus_project'}
+
+\item{main_processes}{main_processes}
+
+\item{model_units}{model_units}
+
+\item{geometry}{geomtery}
+
+\item{print_options}{print_options}
+
+\item{water_flow_bcs}{water_flow_bcs}
+}
+\value{
+Edits the .DAT file of the HYRDUS project
 }
 \description{
 Title
+}
+\examples{
+edit_dat_file(hydrus_project, main_processes = main_processes, model_units = model_units, geometry = geometry, print_options = print_options, water_flow_bcs = water_flow_bcs)
 }

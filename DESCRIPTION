@@ -1,11 +1,11 @@
 Package: runhydrus
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Creates, Parameterizes, and Runs a HYDRUS model
 Version: 0.1.0
 Authors@R: c(
     person(
-      "Jane", "Doe",
-      email = "jane@example.com",
+      "S. Katie", "Fogg",
+      email = "katie.fogg@montana.edu",
       role = c("aut", "cre")
     )
   )
@@ -17,3 +17,6 @@ LazyData: true
 URL: https://github.com/skfogg/runhydrus
 BugReports: https://github.com/skfogg/runhydrus/issues
 RoxygenNote: 7.3.3
+Imports: 
+  dplyr, stringr
+

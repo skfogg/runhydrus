@@ -4,19 +4,17 @@
 \alias{block_g_root_water_uptake_info}
 \title{Set Block G of SELECTOR.IN: Root Water Uptake Information}
 \usage{
-block_g_root_water_uptake_info(
-  hydrus_project,
-  root_water_uptake = root_water_uptake
-)
+block_g_root_water_uptake_info(hydrus_model)
 }
 \arguments{
-\item{hydrus_project}{a hydrus model object created with
-'create_hydrus_project'}
-
-\item{root_water_uptake_model}{which root water uptake model to use. Default is '0' the Feddes model.}
-
-\item{root_water_uptake_params}{data.frame of parameters (by column) for the root water uptake model.}
+\item{hydrus_model}{a hydrus model created with \code{\link{create_hydrus_project}}}
+}
+\value{
+edits BLOCK G of SELECTOR.IN
 }
 \description{
 Set Block G of SELECTOR.IN: Root Water Uptake Information
+}
+\examples{
+block_g_root_water_uptake_info(hydrus_model, root_water_uptake)
 }

@@ -1,0 +1,5 @@
+
+   Time       ET        Evap    Transp     Rns        Rnl    RadTerm  AeroTerm     Prec     Interc   ExInterc
+    [d]     [mm/d]    [mm/d]    [mm/d] [MJ/m2/d]  [MJ/m2/d]   [mm/d]    [mm/d]    [mm/d]    [mm/d]    [mm/d]
+
+    1.00     0.589     0.589     0.000     4.969     2.790     0.559     0.030     0.000     0.000     0.000

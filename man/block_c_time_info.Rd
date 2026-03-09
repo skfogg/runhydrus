@@ -4,19 +4,13 @@
 \alias{block_c_time_info}
 \title{Set Time Parameters in BLOCK C of SELECTOR.IN}
 \usage{
-block_c_time_info(
-  hydrus_project,
-  time_parameters = time_parameters,
-  print_options = print_options
-)
+block_c_time_info(hydrus_model)
 }
 \arguments{
-\item{hydrus_project}{a hydrus project object created with
-'create_hydrus_project'}
-
-\item{time_parameters}{list of time parameters, see details.}
-
-\item{print_options}{list of print options, see details.}
+\item{hydrus_model}{a hydrus model created with \code{\link{create_hydrus_project}}}
+}
+\value{
+edits BLOCK C of SELECTOR.IN
 }
 \description{
 desc
@@ -32,4 +26,7 @@ print out. 'interval_output_option' is a logical indicating to turn on interval 
 'interval_output_option = TRUE' and specfies the interval to output.
 'print_time_interval' is a logical indicating whether or not to print time
 information (default on, TRUE). 'time_info_print_every_n_time_steps', default 1, print time interval.
+}
+\examples{
+block_c_time_info(hydrus_project, time_parameters = time_parameters, print_options = print_options)
 }

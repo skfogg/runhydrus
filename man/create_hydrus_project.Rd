@@ -5,24 +5,33 @@
 \title{Initiates a HYDRUS project}
 \usage{
 create_hydrus_project(
-  project_name,
-  parent_dir,
-  hydrus_version = 5,
-  description = NULL
+ project_name,
+ parent_dir,
+ hydrus_version = 5,
+ description = NULL
 )
 }
 \arguments{
-\item{project_name}{Name of the HYDRUS project to create}
+\item{project_name}{Name of the HYDRUS project to create.}
 
-\item{parent_dir}{Path to the project folder}
+\item{parent_dir}{Path to the project folder.}
 
 \item{hydrus_version}{Integer indicating which HYDRUS version to use. Must be version 4 or 5.}
 
-\item{description}{Optional project description character string}
+\item{description}{Optional project description character string.}
 }
 \value{
-an object of hydrus_project class with all model info set
+Function returns the default HYDRUS model. Editing of the default model should be done with \code{\link{parameterize_hydrus_model}}.
+Set parameters using \code{\link{main_processes}}, \code{\link{model_units}}, \code{\link{geometry}}, \code{\link{print_options}},
+\code{\link{time_parameters}}, \code{\link{time_variable_bc}}, \code{\link{iteration_criteria}}, \code{\link{soil_hydraulics}},
+\code{\link{water_flow_bcs}}, \code{\link{root_water_uptake}}, \code{\link{root_growth}}, \code{\link{solute_options}}, and \code{\link{particle_tracking}}.
 }
 \description{
-Initiates a HYDRUS project
+Creates a project directory with necessary input files. Returns a default HYDRUS model for further editing.
+}
+\examples{
+create_hydrus_project(project_name = "Test Project",
+                                parent_dir = getwd(),
+                                hydrus_version = 5,
+                                description = "This is a test project.")
 }
