@@ -22,7 +22,7 @@ block_g_root_water_uptake_info <- function(hydrus_model
   # *** BLOCK G: ROOT WATER UPTAKE INFORMATION ***
   #  Model  (0 - Feddes, 1 - S shape)  cRootMax    OmegaC
   # 0                                   1
-  selector_template[grep("Feddes", selector_template) + 1] <- str_flatten(c(rep(" ", times = 8),
+  selector_template[grep("Feddes", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 8),
                                                                             hydrus_model$root_water_uptake$root_water_uptake_model,
                                                                             rep(" ", times = 36),
                                                                             ifelse(hydrus_model$root_water_uptake$root_water_uptake_model %in% c(0,1),
@@ -44,7 +44,7 @@ block_g_root_water_uptake_info <- function(hydrus_model
     if(any(!colnames(hydrus_model$root_water_uptake$root_water_uptake_params) %in% c("critical_stress_index","P0","POpt","P2H","P2L","P3","r2H","r2L"))){
       stop("Error in root_water_uptake$root_water_uptake_params. For the Feddes model (0) column names must be 'critical_stress_index','P0','POpt','P2H','P2L','P3','r2H','r2L'.")
     }
-    selector_template[grep("P0", selector_template) + 1] <- str_flatten(c(rep(" ", times = 6),
+    selector_template[grep("P0", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 6),
                                                                           hydrus_model$root_water_uptake$root_water_uptake_params$P0,
                                                                           rep(" ", times = 6),
                                                                           hydrus_model$root_water_uptake$root_water_uptake_params$P2H,
@@ -58,7 +58,7 @@ block_g_root_water_uptake_info <- function(hydrus_model
                                                                           hydrus_model$root_water_uptake$root_water_uptake_params$r2L))
 
     ## TO DO: ADD IN OPTION OF SETTING MORE THAN ONE VALUE HERE:
-    selector_template[grep("POptm", selector_template) + 1] <- str_flatten(c(rep(" ", times = 6),
+    selector_template[grep("POptm", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 6),
                                                                            hydrus_model$root_water_uptake$root_water_uptake_params$POpt))
   }
 
@@ -69,7 +69,7 @@ block_g_root_water_uptake_info <- function(hydrus_model
     if(any(!colnames(hydrus_model$root_water_uptake$root_water_uptake_params) %in% c("critical_stress_index","h50","P3"))){
       stop("Error in root_water_uptake$root_water_uptake_params. For the S-Shaped model (1) column names must be 'critical_stress_index','h50','P3'.")
     }
-    selector_template[grep("h50", selector_template) + 1] <- str_flatten(c(rep(" ", times = 6),
+    selector_template[grep("h50", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 6),
                                                                            hydrus_model$root_water_uptake$root_water_uptake_params$h50,
                                                                            rep(" ", times = 6),
                                                                            hydrus_model$root_water_uptake$root_water_uptake_params$P3))
@@ -85,7 +85,7 @@ block_g_root_water_uptake_info <- function(hydrus_model
     if(!is.logical(hydrus_model$root_water_uptake$root_water_uptake_params$lHydRed)){
       stop("Error in root_water_uptake$root_water_uptake_params. Parameter lHydRed of the Nimah & Hanks model must be either TRUE to allow hydraulic redistribution or FALSE to prevent hydraulic redistribution. ")
     }
-    selector_template[grep("lHydRed", selector_template) + 1] <- str_flatten(c(rep(" ", times = 6),
+    selector_template[grep("lHydRed", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 6),
                                                                                ifelse(hydrus_model$root_water_uptake$root_water_uptake_params$lHydRed, 't', 'f'),
                                                                                rep(" ", times = 6),
                                                                                hydrus_model$root_water_uptake$root_water_uptake_params$P3))
@@ -98,7 +98,7 @@ block_g_root_water_uptake_info <- function(hydrus_model
     if(any(!colnames(hydrus_model$root_water_uptake$root_water_uptake_params) %in% c("hx_min","rKrs","rKComp"))){
       stop("Error in root_water_uptake$root_water_uptake_params. For the Couvreur model (3) column names must be 'hx_min','rKrs','rKComp'.")
     }
-    selector_template[grep("hx_min", selector_template) + 1] <- str_flatten(c(rep(" ", times = 6),
+    selector_template[grep("hx_min", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 6),
                                                                               hydrus_model$root_water_uptake$root_water_uptake_params$hx_min,
                                                                               rep(" ", times = 6),
                                                                               hydrus_model$root_water_uptake$root_water_uptake_params$rKrs,
@@ -113,7 +113,7 @@ block_g_root_water_uptake_info <- function(hydrus_model
     if(any(!colnames(hydrus_model$root_water_uptake$root_water_uptake_params) %in% c("RootRad","XylemRad","Conductance", "RootCond", "a", "H-Wilt"))){
       stop("Error in root_water_uptake$root_water_uptake_params. For the de Jong van Lier  (4) column names must be 'RootRad','XylemRad','Conductance', 'RootCond', 'a', 'H-Wilt'.")
     }
-    selector_template[grep("RootRad", selector_template) + 1] <- str_flatten(c(rep(" ", times = 6),
+    selector_template[grep("RootRad", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 6),
                                                                                hydrus_model$root_water_uptake$root_water_uptake_params$RootRad,
                                                                                rep(" ", times = 6),
                                                                                hydrus_model$root_water_uptake$root_water_uptake_params$XylemRad,

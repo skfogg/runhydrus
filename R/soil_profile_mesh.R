@@ -1,3 +1,15 @@
+#' Set PROFILE.DAT file
+#'
+#' @param hydrus_model
+#' @param mesh_density
+#' @param set_mesh_nodes_manually
+#' @param mesh_nodes_manual
+#' @param nodal_soil_properties
+#'
+#' @returns
+#' @export
+#'
+#' @examples
 soil_profile_mesh <- function(hydrus_model,
                               mesh_density = data.frame(fixed_points = c(0, -101),
                                                         upper_relative_size_fe = 1.0,
@@ -30,7 +42,7 @@ soil_profile_mesh <- function(hydrus_model,
   profile_connection <- file.path(paste0(hydrus_model$hydrus_project$project_path, "/PROFILE.DAT"))
   profile_template <- readLines(file.path("./templates/PROFILE.DAT"))
 
-  profile_template[grep("Pcp", profile_template)+1] <- str_flatten(c(rep(" ", times = 4),
+  profile_template[grep("Pcp", profile_template)+1] <- stringr::str_flatten(c(rep(" ", times = 4),
                                                                    nrow(mesh_density)))
 
   ## Convert to Scientific notation with 6 trailing 0s

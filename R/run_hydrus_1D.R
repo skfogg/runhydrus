@@ -4,7 +4,6 @@
 #' @param hydrus_path Path to the Hydrus 1D executable. NULL will use default install path used by HYDRUS.
 #' @param show_output Logical (Default = TRUE) whether the shell
 #'                    output should be visible on R console (relevant only on windows)
-#' @param ...
 #'
 #' @return
 #' @export

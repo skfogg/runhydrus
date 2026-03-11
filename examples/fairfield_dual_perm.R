@@ -1,0 +1,105 @@
+##
+## Meghan's Dual-permeability model of Fairfield
+##
+
+## To install from github:
+# devtools::install_github("runhydrus", username = "skfogg")
+library(runhydrus)
+library(readr)
+
+## FIRST FOLLOW INSTRUCTIONS IN THE README OF THE RUNHYDRUS PACKAGE!
+## Must do so to set permissions correctly for HYDRUS to run
+
+## Create a new HYDRUS project:
+### * parent_directory needs to be the full path and not use dot expansion
+fairfield_dual_perm <-  create_hydrus_project(project_name = "fairfield_dual_perm",
+                                              parent_dir = "C:/Users/skati/Documents/runhydrus/examples",
+                                              description = "Replicate Fairfield dual perm model using runhydrus")
+## Parameterize model:
+## Main processes
+fairfield_dual_perm$main_processes <- main_processes(water_flow = T,
+                                                     root_water_uptake = T,
+                                                     root_growth = T)
+## Geometry:
+fairfield_dual_perm$geometry <- geometry(number_materials = 3,
+                                         profile_depth = 175,
+                                         observation_nodes_n = 10,
+                                         observation_nodes = c(2, 5, 9, 14, 18, 27, 41, 52, 64, 84),
+                                         number_subregions = 1)
+## Root Growth:
+fairfield_dual_perm$root_growth <- root_growth(root_growth_factor = 1,
+                                               root_growth_depth = 2,
+                                               root_growth_params = data.frame("initial_root_growth_time" = 115,
+                                                                               "harvest_time" = 245,
+                                                                               "initial_rooting_depth" = 0,
+                                                                               "maximum_rooting_depth" = 60,
+                                                                               "time_period" = 365))
+## Time Variable Boundary Conditions
+fairfield_dual_perm$time_variable_bc <- time_variable_bc(time_variable_bc = T,
+                                                         meteorological_data = T)
+## Water Flow Boundary Conditions
+fairfield_dual_perm$water_flow_bcs <- water_flow_bcs(upper_bc = "atm_bc_with_surface_runoff")
+## Print Options
+fairfield_dual_perm$print_options <- print_options(times_to_print = data.frame(times = 861),
+                                                   interval_output = 1)
+## Time Parameters
+fairfield_dual_perm$time_parameters <- time_parameters(final_model_time = 861)
+## Root Water Uptake
+fairfield_dual_perm$root_water_uptake <- root_water_uptake(root_water_uptake_model = 1,
+                                                           root_water_uptake_params = data.frame(critical_stress_index = 1,
+                                                                                                 h50 = -800,
+                                                                                                 P3 = 3))
+## Solute Options
+fairfield_dual_perm$solute_options <- solute_options(equilibrium_adsorption = TRUE)
+## Soil Hydraulic Model
+fairfield_dual_perm$soil_hydraulics <- soil_hydraulics(soil_hydraulic_model = 8,
+                                                       surface_flow_into_fracture = 0.15,
+                                                       soil_hydraulic_parameters = data.frame(material = 1:3,
+                                                                                              theta_r = c(0.0792, 0.0813, 0.05),
+                                                                                              theta_s = c(0.47, 0.4231, 0.37),
+                                                                                              alpha = c(0.03, 0.019, 0.0353),
+                                                                                              n = c(1.35, 1.45, 3.18),
+                                                                                              K_s = c(6, 8, 642.98),
+                                                                                              l = 0.5,
+                                                                                              theta_r_fr = c(0.01298, 0, 0.01),
+                                                                                              theta_s_fr = c(0.43903, 0.3, 0.8),
+                                                                                              alpha_fr = c(0.017304, 0.079, 0.01),
+                                                                                              n_fr = c(1.3202, 1.6, 1.01),
+                                                                                              K_s_fr = c(289.89, 75.5, 386.52),
+                                                                                              l_fr = 0.5,
+                                                                                              w = 0.04,
+                                                                                              beta = c(4.74, 2, 1),
+                                                                                              gamma = c(0.01, 0.4, 0.4),
+                                                                                              a = c(2.197, 7.8, 10),
+                                                                                              K_a = c(1.4143, 0.01, 1.497)))
+## Apply the Updated Parameterization:
+parameterize_hydrus_model(fairfield_dual_perm)
+
+## Alter necessary input files:
+## Time-Variable Atmospheric Inputs:
+meghans_atmosph <- read_csv("./examples/meghan_atmosph.csv")
+edit_atmosph_file(fairfield_dual_perm,
+                  atm_time_series = data.frame(time = meghans_atmosph$tAtm,
+                                               precip = meghans_atmosph$Prec,
+                                               evap = meghans_atmosph$rSoil,
+                                               min_pressure_head = meghans_atmosph$hCritA),
+                  max_h_at_surface = 0)
+
+## Soil Profile Mesh:
+soil_profile_mesh(fairfield_dual_perm,
+                  mesh_density = data.frame(fixed_points = c(0, -175),
+                                            upper_relative_size_fe = 1.0,
+                                            lower_relative_size_fe = 1.0),
+                  nodal_soil_properties = list(h = -175,
+                                               root = 0,
+                                               a_xz = 1,
+                                               b_xz = 1,
+                                               d_xz = 1,
+                                               mat = 1,
+                                               lay = 1,
+                                               temp = 20,
+                                               conc = 0))
+
+
+## Run HYDRUS:
+run_hydrus_1D(fairfield_dual_perm)

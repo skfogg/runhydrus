@@ -565,30 +565,134 @@ root_growth <- function(root_growth_depth = 0,
               root_growth_factor = root_growth_factor))
 }
 
-#' Set solute parameters in a HYDRUS model
+#' Set solute transport parameters in a HYDRUS model
 #'
-#' Function to set solute_options while maintaining unused default model parameters.
+#' Function to set solute_transport while maintaining unused default model parameters.
 #'
-#' @usage solute_options(
+#' @usage solute_transport(solute_transport_model = "equilibrium_model",
 #'  standard_solute_transport = TRUE,
 #'  number_solutes = 0,
-#'  equilibrium_adsorption = FALSE
-#' )
+#'  equilibrium_adsorption = FALSE,
+#'  time_weighting_scheme = "crank_nickolson",
+#'  space_weighting_scheme = "galerkin_fe",
+#'  pulse_duration = 0,
+#'  stability_criterion = 1,
+#'  use_tortuosity = TRUE,
+#'  temperature_dependance = FALSE,
+#'  temperature_dependance_params = data.frame(NULL),
+#'  special_iteration_criteria = data.frame(absolute_conc_tol = 1,
+#'                                          relative_conc_tol = 1,
+#'                                          maximum_n_iteration = 1),
+#'  material_params = data.frame(bulk_density,
+#'                               longitudinal_dispersivity,
+#'                               fraction_adsorption_sites,
+#'                               immobile_water_content),
+#'  solute_params = data.frame(molecular_diffusion_free_water = 0,
+#'                             molecular_diffusion_soil_air = 0),
+#'  solute_reaction_params = data.frame(Kd = 0,
+#'                                      Nu = 0,
+#'                                      Beta = 1,
+#'                                      Henry = 0,
+#'                                      SnkL1 = 0,
+#'                                      SnkS1 = 0,
+#'                                      SnkG1 = 0,
+#'                                      SnkL1_prime = 0,
+#'                                      SnkS1_prime = 0,
+#'                                      SnkG1_prime = 0,
+#'                                      SnkL0 = 0,
+#'                                      SnkS0 = 0,
+#'                                      SnkG0 = 0,
+#'                                      Alpha = 0),
+#'  solute_transport_bcs = data.frame(upper_bc = "solute_flux_bc",
+#'                                    lower_bc = "concentration_bc",
+#'                                    in_total_concentrations = FALSE,
+#'                                    stagnant_boundary_layer = NA,
+#'                                    concentration_in_atmosphere = NA,
+#'                                    fractionation_ratio = NA)
+#'  )
 #'
-#' @param standard_solute_transport logical. Use standard solute transport (TRUE)
-#' @param number_solutes integer. Number of solutes.
-#' @param equilibrium_adsorption logical. Use equilibrium adsorption (TRUE)
+#' @param solute_transport_model character string indicating which solute transport model to use. See details for options.
+#' @param number_solutes
+#' @param equilibrium_adsorption
+#' @param time_weighting_scheme
+#' @param space_weighting_scheme
+#' @param pulse_duration
+#' @param stability_criterion
+#' @param use_tortuosity
+#' @param temperature_dependance
+#' @param temperature_dependance_params
+#' @param special_iteration_criteria
+#' @param material_params
+#' @param solute_params
+#' @param solute_reaction_params
+#' @param solute_transport_bcs
 #'
 #' @returns list of parameters
 #' @export
 #'
+#' @details \code{solute_transport_model} options:
+#' \describe{
+#'  \item{\code{"equilibrium_model"}}{Standard solute transport model}
+#'  \item{\code{"dual_perm_phys_non_equilibrium}}{Dual permeability physical non-equilibrium mode}
+#' }
+#'
 #' @examples hydrus_model$solute_options <- solute_options(number_solutes = 1)
-solute_options <- function(standard_solute_transport = TRUE,
-                           number_solutes = 0,
-                           equilibrium_adsorption = FALSE){
-  return(list(standard_solute_transport = standard_solute_transport,
+solute_transport <- function(solute_transport_model = "equilibrium_model",
+                             #standard_solute_transport = TRUE,
+                             number_solutes = 0,
+                             equilibrium_adsorption = FALSE,
+                             time_weighting_scheme = "crank_nickolson",
+                             space_weighting_scheme = "galerkin_fe",
+                             pulse_duration = 0,
+                             stability_criterion = 1,
+                             use_tortuosity = TRUE,
+                             temperature_dependance = FALSE,
+                             temperature_dependance_params = data.frame(NULL),
+                             special_iteration_criteria = data.frame(absolute_conc_tol = 1,
+                                                                     relative_conc_tol = 1,
+                                                                     maximum_n_iteration = 1),
+                             material_params = data.frame(bulk_density,
+                                                          longitudinal_dispersivity,
+                                                          fraction_adsorption_sites,
+                                                          immobile_water_content),
+                             solute_params = data.frame(molecular_diffusion_free_water = 0,
+                                                        molecular_diffusion_soil_air = 0),
+                             solute_reaction_params = data.frame(Kd = 0,
+                                                                 Nu = 0,
+                                                                 Beta = 1,
+                                                                 Henry = 0,
+                                                                 SnkL1 = 0,
+                                                                 SnkS1 = 0,
+                                                                 SnkG1 = 0,
+                                                                 SnkL1_prime = 0,
+                                                                 SnkS1_prime = 0,
+                                                                 SnkG1_prime = 0,
+                                                                 SnkL0 = 0,
+                                                                 SnkS0 = 0,
+                                                                 SnkG0 = 0,
+                                                                 Alpha = 0),
+                             solute_transport_bcs = data.frame(upper_bc = "solute_flux_bc",
+                                                               lower_bc = "concentration_bc",
+                                                               in_total_concentrations = FALSE,
+                                                               stagnant_boundary_layer = NA,
+                                                               concentration_in_atmosphere = NA,
+                                                               fractionation_ratio = NA)
+                             ){
+  return(list(solute_transport_model = solute_transport_model,
               number_solutes = number_solutes,
-              equilibrium_adsorption = equilibrium_adsorption))
+              equilibrium_adsorption = equilibrium_adsorption,
+              time_weighting_scheme = time_weighting_scheme,
+              space_weighting_scheme = space_weighting_scheme,
+              pulse_duration = pulse_duration,
+              stability_criterion  = stability_criterion,
+              use_tortuosity = use_tortuosity,
+              temperature_dependance = temperature_dependance,
+              temperature_dependance_params = temperature_dependance_params,
+              special_iteration_criteria = special_iteration_criteria,
+              material_params = material_params,
+              solute_params = solute_params,
+              solute_reaction_params = solute_reaction_params,
+              solute_transport_bcs ))
 }
 
 #' Set particle tracking parameters in a HYDRUS model

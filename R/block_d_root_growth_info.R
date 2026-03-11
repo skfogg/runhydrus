@@ -27,7 +27,7 @@ block_d_root_growth_info <- function(hydrus_model
   }
 
   ## Specify the root growth depth model:
-  selector_template[grep("iRootDepthEntry", selector_template) + 1] <- str_flatten(c(rep(" ", times = 8),
+  selector_template[grep("iRootDepthEntry", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 8),
                                                                                    as.character(hydrus_model$root_growth$root_growth_depth)))
 
   ### Root Depth specified with time variable boundary conditions:
@@ -49,11 +49,11 @@ block_d_root_growth_info <- function(hydrus_model
       stop("Error in root_growth$root_growth_params. Root depth table must have column names 'Time' and 'RootDepth'.")
     }
 
-    selector_template[grep("nGrowth", selector_template) + 1] <- str_flatten(c(rep(" ", times = 8),
+    selector_template[grep("nGrowth", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 8),
                                                                                nrow(hydrus_model$root_growth$root_growth_params)))
 
     for(i in 1:nrow(hydrus_model$root_growth$root_growth_params)){
-      selector_template[grep("Time  RootDepth", selector_template) + i] <- str_flatten(c(rep(" ", times = 8),
+      selector_template[grep("Time  RootDepth", selector_template) + i] <- stringr::str_flatten(c(rep(" ", times = 8),
                                                                                          hydrus_model$root_growth$root_growth_params[i, "Time"],
                                                                                          rep(" ", times = 8),
                                                                                          hydrus_model$root_growth$root_growth_params[i, "RootDepth"]))
@@ -71,7 +71,7 @@ block_d_root_growth_info <- function(hydrus_model
 
 
     if(hydrus_model$root_growth$root_growth_factor == 0){
-      selector_template[grep("iRFak", selector_template) + 1] <- str_flatten(c(rep(" ", times = 8),
+      selector_template[grep("iRFak", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 8),
                                                                                hydrus_model$root_growth$root_growth_factor))
 
       if(any(!colnames(hydrus_model$root_growth$root_growth_params) %in% c("initial_root_growth_time", "time_root_data", "harvest_time", "initial_rooting_depth", "depth_root_data", "maximum_rooting_depth", "time_period"))|is.null(hydrus_model$root_growth$root_growth_params)){
@@ -80,7 +80,7 @@ block_d_root_growth_info <- function(hydrus_model
              'depth_root_data', 'maximum_rooting_depth', 'time_period'.")
       }
 
-      selector_template[grep("iRFak", selector_template) + 1] <- str_flatten(c(rep(" ", times = 17),
+      selector_template[grep("iRFak", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 17),
                                                                                hydrus_model$root_growth$root_growth_params$initial_root_growth_time,
                                                                                rep(" ", times = 8),
                                                                                hydrus_model$root_growth$root_growth_params$time_root_data,
@@ -98,14 +98,14 @@ block_d_root_growth_info <- function(hydrus_model
     }
 
     if(hydrus_model$root_growth$root_growth_factor == 1){
-      # selector_template[grep("iRFak", selector_template) + 1] <- str_flatten(c(rep(" ", times = 8),
+      # selector_template[grep("iRFak", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 8),
       #                                                                          root_growth$root_growth_factor))
 
       if(any(!colnames(hydrus_model$root_growth$root_growth_params) %in% c("initial_root_growth_time", "harvest_time", "initial_rooting_depth", "maximum_rooting_depth", "time_period"))|is.null(hydrus_model$root_growth$root_growth_params)){
         stop("Error in root_growth$root_growth_params. Root depth data.frame must have column names 'initial_root_growth_time', 'harvest_time', 'initial_rooting_depth', 'maximum_rooting_depth', 'time_period'.")
       }
 
-      selector_template[grep("iRFak", selector_template) + 1] <- str_flatten(c(rep(" ", times = 8),
+      selector_template[grep("iRFak", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 8),
                                                                                hydrus_model$root_growth$root_growth_factor,
                                                                                rep(" ", times = 8),
                                                                                hydrus_model$root_growth$root_growth_params$initial_root_growth_time,

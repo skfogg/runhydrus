@@ -31,10 +31,10 @@ block_a_basic_info <- function(hydrus_model){
 
   ## Start with all model options turned off:
   basic_opt_1 <- data.frame(keyword = stringr::str_split(selector_template[grep("lWat", selector_template)], " {1,}", simplify = T)[1,],
-                            idx_loc = sort(unique(unlist(str_locate_all(selector_template[grep("lWat", selector_template)+1], c("t", "f"))))),
+                            idx_loc = sort(unique(unlist(stringr::str_locate_all(selector_template[grep("lWat", selector_template)+1], c("t", "f"))))),
                             on = "f")
   basic_opt_2 <- data.frame(keyword = stringr::str_split(selector_template[grep("lSnow", selector_template)], " {1,}", simplify = T)[1,],
-                            idx_loc = sort(unique(unlist(str_locate_all(selector_template[grep("lSnow", selector_template)+1], c("t", "f"))))),
+                            idx_loc = sort(unique(unlist(stringr::str_locate_all(selector_template[grep("lSnow", selector_template)+1], c("t", "f"))))),
                             on = "f")
 
   # Turn on options based on processes set in create_hydrus_project()
@@ -105,26 +105,26 @@ block_a_basic_info <- function(hydrus_model){
   }
 
   ## Properly space the SELECTOR.IN lines
-  opt_1 <- str_split(selector_template[grep("lWat", selector_template) + 1], "", simplify = TRUE)
+  opt_1 <- stringr::str_split(selector_template[grep("lWat", selector_template) + 1], "", simplify = TRUE)
   for(i in 1:nrow(basic_opt_1)){
     opt_1[1, basic_opt_1$idx_loc[i]] <- basic_opt_1$on[i]
   }
 
-  opt_2 <- str_split(selector_template[grep("lSnow", selector_template) + 1], "", simplify = TRUE)
+  opt_2 <- stringr::str_split(selector_template[grep("lSnow", selector_template) + 1], "", simplify = TRUE)
   for(i in 1:nrow(basic_opt_2)){
     opt_2[1, basic_opt_2$idx_loc[i]] <- basic_opt_2$on[i]
   }
 
   ## Assign to selector_template on the correct lines
-  selector_template[grep("lWat", selector_template) + 1] <- str_flatten(opt_1[1,])
-  selector_template[grep("lSnow", selector_template) + 1] <- str_flatten(opt_2[1,])
+  selector_template[grep("lWat", selector_template) + 1] <- stringr::str_flatten(opt_1[1,])
+  selector_template[grep("lSnow", selector_template) + 1] <- stringr::str_flatten(opt_2[1,])
 
   ## set the number of materials
-  geometry_line <- str_split(selector_template[grep("NMat", selector_template) + 1], "", simplify = T)
+  geometry_line <- stringr::str_split(selector_template[grep("NMat", selector_template) + 1], "", simplify = T)
   geometry_line[1,3] <- as.character(hydrus_model$geometry$number_materials)
   geometry_line[1,11] <- as.character(hydrus_model$geometry$number_subregions)
   # CosAlpha is gravity
-  selector_template[grep("NMat", selector_template) + 1] <- str_flatten(geometry_line)
+  selector_template[grep("NMat", selector_template) + 1] <- stringr::str_flatten(geometry_line)
 
 
   ## Update SELECTOR.IN

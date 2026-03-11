@@ -18,7 +18,7 @@ edit_atmosph_file <- function(hydrus_model,
   ## upper bc is one of the 'constant' options, then there is nothing to vary.
   ## --> have a check that you can't use time variable options when you have
   ##     chosen constant upper bcs
-  if(str_detect(hydrus_model$water_flow_bcs$upper_bc, "constant")){
+  if(stringr::str_detect(hydrus_model$water_flow_bcs$upper_bc, "constant")){
     stop("Error in hydrus_model parameterization. Time-variable boundary conditions cannot be used when the upper flow boundary condition is constant.")
   }
 
@@ -61,22 +61,22 @@ edit_atmosph_file <- function(hydrus_model,
   write(atmosph_template, file = file.path(hydrus_model$hydrus_project$project_path, "ATMOSPH.IN"))
 
   ## update the number of atmospheric observations (based on the number of rows in the given data.frame)
-  atmosph_template[grep("MaxAL", atmosph_template) + 1] <- str_flatten(c(rep(" ", times = 6),
+  atmosph_template[grep("MaxAL", atmosph_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 6),
                                                                        nrow(atm_time_series)))
 
-  time_var_bc_options <- str_split(atmosph_template[grep("DailyVar", atmosph_template) + 1], "", simplify = T)
+  time_var_bc_options <- stringr::str_split(atmosph_template[grep("DailyVar", atmosph_template) + 1], "", simplify = T)
 
   if(hydrus_model$time_variable_bc$daily_var_transpiration){
     time_var_bc_options[,8] <- "t"
-    atmosph_template[grep("DailyVar", atmosph_template) + 1] <- str_flatten(time_var_bc_options)
+    atmosph_template[grep("DailyVar", atmosph_template) + 1] <- stringr::str_flatten(time_var_bc_options)
   }
   if(hydrus_model$time_variable_bc$sinusoidal_var_precipitation){
     time_var_bc_options[,16] <- "t"
-    atmosph_template[grep("DailyVar", atmosph_template) + 1] <- str_flatten(time_var_bc_options)
+    atmosph_template[grep("DailyVar", atmosph_template) + 1] <- stringr::str_flatten(time_var_bc_options)
   }
   if(hydrus_model$time_variable_bc$repeat_bc_records){
     time_var_bc_options[,32] <- "t"
-    atmosph_template[grep("DailyVar", atmosph_template) + 1] <- str_flatten(time_var_bc_options)
+    atmosph_template[grep("DailyVar", atmosph_template) + 1] <- stringr::str_flatten(time_var_bc_options)
 
     ## add in Cycles lines
     atmosph_template <- c(atmosph_template[1:grep("DailyVar", atmosph_template) + 1],
@@ -87,7 +87,7 @@ edit_atmosph_file <- function(hydrus_model,
   }
 
   if(hydrus_model$water_flow_bcs$upper_bc == "atm_bc_with_surface_layer"){
-    atmosph_template[grep("hCritS", atmosph_template) + 1] <- str_flatten(c(rep(" ", times = 6),
+    atmosph_template[grep("hCritS", atmosph_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 6),
                                                                             max_h_at_surface))
   }
 
@@ -142,7 +142,7 @@ edit_atmosph_file <- function(hydrus_model,
   for(i in 1:nrow(atm_time_series)){
     atmosph_template[grep("tAtm", atmosph_template)+i] <- paste(rep(" ", times = 7),
                                                                  as.character(unlist(fill_in_df[i,])),
-                                                                 collapse = str_flatten(rep(" ", times =  10)))
+                                                                 collapse = stringr::str_flatten(rep(" ", times =  10)))
   }
 
   atmosph_template[grep("tAtm", atmosph_template)+nrow(atm_time_series)+1] <- end_line

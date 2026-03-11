@@ -13,8 +13,6 @@ run_hydrus_1D(hydrus_model, hydrus_path = NULL, show_output = TRUE)
 
 \item{show_output}{Logical (Default = TRUE) whether the shell
 output should be visible on R console (relevant only on windows)}
-
-\item{...}{}
 }
 \description{
 Executes HYDRUS 1D executable

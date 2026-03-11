@@ -24,7 +24,7 @@ create_hydrus_project(
 Function returns the default HYDRUS model. Editing of the default model should be done with \code{\link{parameterize_hydrus_model}}.
 Set parameters using \code{\link{main_processes}}, \code{\link{model_units}}, \code{\link{geometry}}, \code{\link{print_options}},
 \code{\link{time_parameters}}, \code{\link{time_variable_bc}}, \code{\link{iteration_criteria}}, \code{\link{soil_hydraulics}},
-\code{\link{water_flow_bcs}}, \code{\link{root_water_uptake}}, \code{\link{root_growth}}, \code{\link{solute_options}}, and \code{\link{particle_tracking}}.
+\code{\link{water_flow_bcs}}, \code{\link{root_water_uptake}}, \code{\link{root_growth}}, \code{\link{solute_transport}}, and \code{\link{particle_tracking}}.
 }
 \description{
 Creates a project directory with necessary input files. Returns a default HYDRUS model for further editing.

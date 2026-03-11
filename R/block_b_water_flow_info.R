@@ -43,7 +43,7 @@ block_b_water_flow_info <- function(hydrus_model){
   #### *** BLOCK B: WATER FLOW INFORMATION *** ####
   # ----------------------------------------------------------------------------
   ### Iteration Criteria:
-  selector_template[grep("MaxIt ",  selector_template) + 1] <- str_flatten(c(" ", " ",
+  selector_template[grep("MaxIt ",  selector_template) + 1] <- stringr::str_flatten(c(" ", " ",
                                                                              hydrus_model$iteration_criteria$maximum_iterations,
                                                                              rep(" ", times = 4),
                                                                              hydrus_model$iteration_criteria$water_content_tol,
@@ -51,7 +51,7 @@ block_b_water_flow_info <- function(hydrus_model){
                                                                              hydrus_model$iteration_criteria$pressure_head_tol))
   # ----------------------------------------------------------------------------
   ### Assign top boundary conditions: TopInf WLayer KodTop InitCond ####
-  top_boundary <- str_split(selector_template[grep("TopInf", selector_template) + 1], "", simplify = T)
+  top_boundary <- stringr::str_split(selector_template[grep("TopInf", selector_template) + 1], "", simplify = T)
   top_bc_slots <- c(2, 8, 16, 24)
 
   ## get bc options from user chosen top bc in options data frame
@@ -62,22 +62,22 @@ block_b_water_flow_info <- function(hydrus_model){
   }
 
   ## assign options values in correct slots
-  if(str_count(specified_top_bc["KodTop"]) == 1){
+  if(stringr::str_count(specified_top_bc["KodTop"]) == 1){
     top_boundary[,15] <- " "
     top_boundary[,top_bc_slots] <- specified_top_bc
   }else{
     top_bc_slots <- c(2, 8, 15, 16, 24)
     top_boundary[,top_bc_slots] <- c(specified_top_bc[1:2],
-                                     str_split(specified_top_bc["KodTop"], "", simplify = T),
+                                     stringr::str_split(specified_top_bc["KodTop"], "", simplify = T),
                                      specified_top_bc[4])
   }
 
   ## update selector template with new values
-  selector_template[grep("TopInf", selector_template) + 1] <- str_flatten(top_boundary)
+  selector_template[grep("TopInf", selector_template) + 1] <- stringr::str_flatten(top_boundary)
 
   # ----------------------------------------------------------------------------
   ### Assign bottom boundary conditions: BotInf qGWLF FreeD SeepF KodBot DrainF hSeep ####
-  bottom_boundary <- str_split(selector_template[grep("BotInf", selector_template) + 1], "", simplify = T)
+  bottom_boundary <- stringr::str_split(selector_template[grep("BotInf", selector_template) + 1], "", simplify = T)
   bottom_bc_slots <- c(2, 8, 14, 20, 26, 34, 41)
 
   ## get bc options from user chosen bottom bc in options data frame
@@ -87,18 +87,18 @@ block_b_water_flow_info <- function(hydrus_model){
   bottom_boundary[,bottom_bc_slots] <- specified_bottom_bc
 
   ## update selector template with new values
-  selector_template[grep("BotInf", selector_template) + 1] <- str_flatten(bottom_boundary)
+  selector_template[grep("BotInf", selector_template) + 1] <- stringr::str_flatten(bottom_boundary)
 
   # -------------------------------------
   ## Insert internal interpolation tables if the lines do not exist
   if(hydrus_model$iteration_criteria$internal_interpolation_tables){
     if(length(grep("hTab1", selector_template)) == 0){
     selector_template <- c(selector_template[1:(grep("BotInf", selector_template) + 1)],
-                           str_flatten(c(rep(" ", times = 4),
+                           stringr::str_flatten(c(rep(" ", times = 4),
                                          "hTab1",
                                          rep(" ", times = 3),
                                          "hTabN")),
-                           str_flatten(c(rep(" ", times = 5),
+                           stringr::str_flatten(c(rep(" ", times = 5),
                                          hydrus_model$iteration_criteria$lower_limit_tension_interval,
                                          rep(" ", times = 3),
                                          hydrus_model$iteration_criteria$upper_limit_tension_interval)),
@@ -121,7 +121,7 @@ block_b_water_flow_info <- function(hydrus_model){
     if(length(grep("Irrig_rate", selector_template)) == 0){
       selector_template <- c(selector_template[1:(grep("BotInf", selector_template) + 1)],
                              "Node  Pressure  Irrig_rate  Duration  Lag_period",
-                             str_flatten(c(rep(" ", times = 3),
+                             stringr::str_flatten(c(rep(" ", times = 3),
                                            hydrus_model$water_flow_bcs$irrigation_params$trigger_node,
                                            rep(" ", times = 6),
                                            hydrus_model$water_flow_bcs$irrigation_params$trigger_pressure_head,
@@ -140,8 +140,8 @@ block_b_water_flow_info <- function(hydrus_model){
   if(hydrus_model$main_processes$particle_tracking){
     if(length(grep("wInit", selector_template)) == 0){
       selector_template <- c(selector_template[1:(grep("BotInf", selector_template) + 1)],
-                             str_flatten(c(rep(" ", times = 7), "wInit", rep(" ", times = 8), "wPrec")),
-                             str_flatten(c(rep(" ", times = 9),
+                             stringr::str_flatten(c(rep(" ", times = 7), "wInit", rep(" ", times = 8), "wPrec")),
+                             stringr::str_flatten(c(rep(" ", times = 9),
                                            hydrus_model$particle_tracking$init_water_storage,
                                            rep(" ", times = 10),
                                            hydrus_model$particle_tracking$cumulative_surface_flux)),
@@ -156,9 +156,9 @@ block_b_water_flow_info <- function(hydrus_model){
   if(hydrus_model$water_flow_bc$upper_bc == "constant_flux"){
     if(length(grep("rTop", selector_template)) == 0){
       selector_template <- c(selector_template[1:(grep("BotInf", selector_template) + 1)],
-                             str_flatten(c(rep(" ", times = 9),
+                             stringr::str_flatten(c(rep(" ", times = 9),
                                            "rTop         rBot        rRoot")),
-                             str_flatten(c(rep(" ", times = 11),
+                             stringr::str_flatten(c(rep(" ", times = 11),
                                            hydrus_model$constant_boundary_fluxes$upper_bc_flux,
                                            rep(" ", times = 11),
                                            hydrus_model$constant_boundary_fluxes$lower_bc_flux,
@@ -170,17 +170,17 @@ block_b_water_flow_info <- function(hydrus_model){
 
   # ----------------------------------------
   ## Assign soil hydraulic model and hysteresis
-  soil_model <- str_split(selector_template[grep("Hysteresis", selector_template) + 1], "", simplify = T)
+  soil_model <- stringr::str_split(selector_template[grep("Hysteresis", selector_template) + 1], "", simplify = T)
   soil_model[1,c(7,18)] <- as.character(c(hydrus_model$soil_hydraulics$soil_hydraulic_model, hydrus_model$soil_hydraulics$hysteresis))
-  selector_template[grep("Hysteresis", selector_template) + 1] <- str_flatten(soil_model)
+  selector_template[grep("Hysteresis", selector_template) + 1] <- stringr::str_flatten(soil_model)
 
   ## Insert Kappa parameter when hysteresis selected
   if(hydrus_model$soil_hydraulics$hysteresis > 0){
     selector_template <- c(selector_template[1:(grep("Hysteresis", selector_template) + 1)],
-                           str_flatten(c(rep(" ", times = 4), "Kappa")),
+                           stringr::str_flatten(c(rep(" ", times = 4), "Kappa")),
                            ifelse(hydrus_model$soil_hydraulics$initially_drying_curve,
-                                  str_flatten(c(rep(" ", times = 5), "-1")),
-                                  str_flatten(c(rep(" ", times = 6), "1"))),
+                                  stringr::str_flatten(c(rep(" ", times = 5), "-1")),
+                                  stringr::str_flatten(c(rep(" ", times = 6), "1"))),
                            selector_template[(grep("Hysteresis", selector_template) + 2):length(selector_template)]
     )
   }
@@ -206,8 +206,7 @@ block_b_water_flow_info <- function(hydrus_model){
     # 0     0.8    0.08       2       2496     0.5     0.1      15     0.4     0.1    0.02496
     selector_template <- c(selector_template[1:(grep("thr ", selector_template) + hydrus_model$geometry$number_materials)],
                            "  thrFr   thsFr  AlfaFr     nFr       KsFr     lFr       W    beta   gamma       a        Ka")
-    for(i in 1:hydrus_model$geometry$number_materials){
-
+    for(i in 1:hydrus_model$geometry$number_materials){}
       selector_template[grep("thrFr ", selector_template)+i] <- paste0("  ",
                                                                        hydrus_model$soil_hydraulics$soil_hydraulic_parameters[i, c("theta_r_fr", "theta_s_fr", "alpha_fr", "n_fr", "K_s_fr", "l_fr", "w", "beta", "gamma", "a", "K_a")],
                                                                      collapse = "    ")
@@ -218,11 +217,11 @@ block_b_water_flow_info <- function(hydrus_model){
     if(length(grep("qTop", selector_template)) == 0){
       selector_template <- c(selector_template[1:(grep("BLOCK C", selector_template) - 1)],
                                            "     qTop",
-                             str_flatten(c(rep(" ", times = 6),
+                             stringr::str_flatten(c(rep(" ", times = 6),
                                            hydrus_model$soil_hydraulics$surface_flow_into_fracture)),
                              block_c_and_below)
     }
-  }
+
 
 
     #model = 0; VGM;

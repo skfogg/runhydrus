@@ -61,7 +61,7 @@ edit_meteo_file <- function(hydrus_model,
   ## Radiation = 1 for "solar radiation"
   ## Radiation = 2 for " net radiation"; when this options, options are reduced to the next line and then WindHeight line and down
 
-  meteo_template[grep("MeteoRecords", meteo_template) + 1] <- str_flatten(c(rep(" ", times = 11),
+  meteo_template[grep("MeteoRecords", meteo_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 11),
                                                                             nrow(meteo_time_series),
                                                                             rep(" ", times = 8),
                                                                             radiation_type_code,
@@ -74,7 +74,7 @@ edit_meteo_file <- function(hydrus_model,
 
   # Latitude  Altitude
   # 40        110
-  meteo_template[grep("Latitude", meteo_template) + 1] <- str_flatten(c(rep(" ", times = 7),
+  meteo_template[grep("Latitude", meteo_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 7),
                                                                         latitude,
                                                                         rep(" ", times = 7),
                                                                         altitude))
@@ -85,7 +85,7 @@ edit_meteo_file <- function(hydrus_model,
   # 0.25            0.5
 
   ## shortwave radiation angstrom values a and b
-  meteo_template[grep("ShortWaveRadA", meteo_template) + 1] <- str_flatten(c(rep(" ", times = 10),
+  meteo_template[grep("ShortWaveRadA", meteo_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 10),
                                                                              sw_angstrom_a,
                                                                              rep(" ", times = 10),
                                                                              sw_angstrom_b))
@@ -94,7 +94,7 @@ edit_meteo_file <- function(hydrus_model,
   # 0.9            0.1
 
   ## cloudiness effects on longwave radiation (set 0 if input transmisssivity coeff)
-  meteo_template[grep("LongWaveRadA  ", meteo_template) + 1] <- str_flatten(c(rep(" ", times = 10),
+  meteo_template[grep("LongWaveRadA  ", meteo_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 10),
                                                                              lw_cloudiness_a,
                                                                              rep(" ", times = 10),
                                                                              lw_cloudiness_b))
@@ -103,7 +103,7 @@ edit_meteo_file <- function(hydrus_model,
   # 0.34         -0.139
 
   ## emissivity effect on long wave radiation
-  meteo_template[grep("LongWaveRadA1", meteo_template) + 1] <- str_flatten(c(rep(" ", times = 10),
+  meteo_template[grep("LongWaveRadA1", meteo_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 10),
                                                                             lw_emissivity_a,
                                                                             rep(" ", times = 10),
                                                                             lw_emissivity_b))
@@ -112,7 +112,7 @@ edit_meteo_file <- function(hydrus_model,
   # 200            200
 
   ## measurement heights cm
-  meteo_template[grep("WindHeight", meteo_template) + 1] <- str_flatten(c(rep(" ", times = 10),
+  meteo_template[grep("WindHeight", meteo_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 10),
                                                                              windspeed_meas_height,
                                                                              rep(" ", times = 10),
                                                                              temp_meas_height))
@@ -161,11 +161,11 @@ edit_meteo_file <- function(hydrus_model,
     rh_option <- 1
   }
 
-  icrop_line <- str_split(meteo_template[grep("iCrop", meteo_template) + 1], "", simplify = T)
+  icrop_line <- stringr::str_split(meteo_template[grep("iCrop", meteo_template) + 1], "", simplify = T)
   icrop_line[,10] <- crop_opt_code
   icrop_line[,59] <- cloud_opt_code
   icrop_line[,69] <- rh_option
-  meteo_template[grep("iCrop", meteo_template) + 1] <- str_flatten(icrop_line)
+  meteo_template[grep("iCrop", meteo_template) + 1] <- stringr::str_flatten(icrop_line)
 
 
   ## Insert shortwave cloudiness factors if the radiation type used is "solar_radiation"
@@ -181,7 +181,7 @@ edit_meteo_file <- function(hydrus_model,
 
   # Albedo
   # 0.23
-  meteo_template[grep("Albedo", meteo_template)[1] + 1] <- str_flatten(c(rep(" ", times = 6),
+  meteo_template[grep("Albedo", meteo_template)[1] + 1] <- stringr::str_flatten(c(rep(" ", times = 6),
                                                                        albedo))
 
   # Daily values
@@ -205,7 +205,7 @@ edit_meteo_file <- function(hydrus_model,
   for(i in 1:nrow(met_ts)){
     meteo_template[grep("TMax", meteo_template)+(1+i)] <- paste(rep(" ", times = 6),
                                                                 as.character(unlist(met_ts[i,])),
-                                                                collapse = str_flatten(rep(" ", times =  10)))
+                                                                collapse = stringr::str_flatten(rep(" ", times =  10)))
   }
 
   # add end line

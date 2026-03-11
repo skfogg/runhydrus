@@ -4,7 +4,7 @@
 #'
 #' @returns Function return a list of a model parameters. Edit parameters with \code{\link{main_processes}}, \code{\link{model_units}}, \code{\link{geometry}}, \code{\link{print_options}},
 #' \code{\link{time_parameters}}, \code{\link{time_variable_bc}}, \code{\link{iteration_criteria}}, \code{\link{soil_hydraulics}},
-#' \code{\link{water_flow_bcs}}, \code{\link{root_water_uptake}}, \code{\link{root_growth}}, \code{\link{solute_options}}, and \code{\link{particle_tracking}}.
+#' \code{\link{water_flow_bcs}}, \code{\link{root_water_uptake}}, \code{\link{root_growth}}, \code{\link{solute_transport}}, and \code{\link{particle_tracking}}.
 #' @export
 #'
 #' @examples parameterize_hydrus_model(hydrus_model)
@@ -52,6 +52,10 @@ parameterize_hydrus_model <- function(hydrus_model){
     }
   }
 
+  if(hydrus_model$main_processes$inverse){
+    stop("hydrus_model$main_processes$inverse not available yet")
+  }
+
   ### -------------------
   ### WRITE MODEL BLOCKS:
   ### -------------------
@@ -73,6 +77,10 @@ parameterize_hydrus_model <- function(hydrus_model){
   #### *** BLOCK E: HEAT TRANSPORT INFORMATION *** ####
   if(hydrus_model$main_processes$heat_transport){
     stop("hydrus_model$main_processes$heat_transport not available yet")
+  }
+
+  if(hydrus_model$main_processes$solute_transport){
+    block_f_solute_transport_info(hydrus_model)
   }
 
   #### *** BLOCK F: SOLUTE TRANSPORT INFORMATION *** ####
