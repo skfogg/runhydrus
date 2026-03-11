@@ -78,8 +78,8 @@ create_hydrus_project <- function(project_name,
   lapply(extra_directories, function(x) dir.create(paste0(project_path, "/", x)))
 
   ## Get a basic templates
-  selector_template <- readLines(file("./templates/SELECTOR.IN"))
-  profile_template <- readLines(file("./templates/PROFILE.DAT"))
+  selector_template <- readLines(file("./R/templates/SELECTOR.IN"))
+  profile_template <- readLines(file("./R/templates/PROFILE.DAT"))
 
   ## update file version to match hydrus version
   selector_template[1] <- paste0("Pcp_File_Version=", hydrus_version)

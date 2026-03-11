@@ -10,7 +10,7 @@
 #' @import stringr
 block_a_basic_info <- function(hydrus_model){
 
-  # Uses main_processes, model_units, print_options, time_variable_bc, solute_options, root_water_uptake, water_flow_bcs, geometry
+  # Uses main_processes, model_units, print_options, time_variable_bc, solute_transport, root_water_uptake, water_flow_bcs, geometry
 
   ## Get SELECTOR.IN file of project
   selector_template <- readLines(file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))
@@ -64,7 +64,7 @@ block_a_basic_info <- function(hydrus_model){
   if(hydrus_model$time_variable_bc$time_variable_bc){
     basic_opt_1[basic_opt_1$keyword == "lVariabBC","on"] <- "t"
   }
-  if(hydrus_model$solute_options$standard_solute_transport){
+  if(hydrus_model$solute_transport$solute_transport_model == "equilibrium_model"){
     basic_opt_1[basic_opt_1$keyword == "lEquilib","on"] <- "t"
   }
   if(hydrus_model$main_processes$inverse){

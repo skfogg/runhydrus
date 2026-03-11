@@ -33,7 +33,7 @@ edit_meteo_file <- function(hydrus_model,
   ## NEED TO ADD ERROR CHECKING
 
   ## Get a basic MATEO.IN template
-  meteo_template <- readLines(file("./templates/METEO.IN"))
+  meteo_template <- readLines(file("./R/templates/METEO.IN"))
   ## write to project_path
   write(meteo_template, file = file.path(hydrus_model$hydrus_project$project_path, "METEO.IN"))
 
@@ -196,7 +196,7 @@ edit_meteo_file <- function(hydrus_model,
   ## Assign meteo time series ####
 
   # make sure the columns are in correct order:
-  met_ts <- meteo_time_series %>%
+  met_ts <- meteo_time_series |>
     dplyr::select(
       time, radiation, temp_max, temp_min, rh_mean, windspeed, sun_hours, crop_height, albedo, lai, root_depth
     )

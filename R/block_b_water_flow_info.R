@@ -206,12 +206,12 @@ block_b_water_flow_info <- function(hydrus_model){
     # 0     0.8    0.08       2       2496     0.5     0.1      15     0.4     0.1    0.02496
     selector_template <- c(selector_template[1:(grep("thr ", selector_template) + hydrus_model$geometry$number_materials)],
                            "  thrFr   thsFr  AlfaFr     nFr       KsFr     lFr       W    beta   gamma       a        Ka")
-    for(i in 1:hydrus_model$geometry$number_materials){}
+    for(i in 1:hydrus_model$geometry$number_materials){
       selector_template[grep("thrFr ", selector_template)+i] <- paste0("  ",
                                                                        hydrus_model$soil_hydraulics$soil_hydraulic_parameters[i, c("theta_r_fr", "theta_s_fr", "alpha_fr", "n_fr", "K_s_fr", "l_fr", "w", "beta", "gamma", "a", "K_a")],
                                                                      collapse = "    ")
-      }
-    selector_template <- c(selector_template[1:(grep("thrFr", selector_template)+hydrus_model$geometry$number_materials)],
+    }
+    selector_template <- c(selector_template[1:(grep("thrFr ", selector_template)+hydrus_model$geometry$number_materials)],
                            block_c_and_below)
 
     if(length(grep("qTop", selector_template)) == 0){
@@ -221,6 +221,7 @@ block_b_water_flow_info <- function(hydrus_model){
                                            hydrus_model$soil_hydraulics$surface_flow_into_fracture)),
                              block_c_and_below)
     }
+  }
 
 
 

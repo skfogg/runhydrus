@@ -633,7 +633,7 @@ root_growth <- function(root_growth_depth = 0,
 #' @details \code{solute_transport_model} options:
 #' \describe{
 #'  \item{\code{"equilibrium_model"}}{Standard solute transport model}
-#'  \item{\code{"dual_perm_phys_non_equilibrium}}{Dual permeability physical non-equilibrium mode}
+#'  \item{\code{"dual_perm_phys_non_equilibrium"}}{Dual permeability physical non-equilibrium mode}
 #' }
 #'
 #' @examples hydrus_model$solute_options <- solute_options(number_solutes = 1)
@@ -651,10 +651,10 @@ solute_transport <- function(solute_transport_model = "equilibrium_model",
                              special_iteration_criteria = data.frame(absolute_conc_tol = 1,
                                                                      relative_conc_tol = 1,
                                                                      maximum_n_iteration = 1),
-                             material_params = data.frame(bulk_density,
-                                                          longitudinal_dispersivity,
-                                                          fraction_adsorption_sites,
-                                                          immobile_water_content),
+                             material_params = data.frame(bulk_density = NA,
+                                                          longitudinal_dispersivity = NA,
+                                                          fraction_adsorption_sites = NA,
+                                                          immobile_water_content = NA),
                              solute_params = data.frame(molecular_diffusion_free_water = 0,
                                                         molecular_diffusion_soil_air = 0),
                              solute_reaction_params = data.frame(Kd = 0,

@@ -2,25 +2,12 @@
 #'
 #' @param hydrus_project a hydrus project object created with
 #'   'create_hydrus_project'
-#' @param main_processes main_processes
-#' @param model_units model_units
-#' @param geometry geomtery
-#' @param print_options print_options
-#' @param water_flow_bcs water_flow_bcs
 #'
 #' @returns Edits the .DAT file of the HYRDUS project
 #' @export
 #'
 #' @examples edit_dat_file(hydrus_project, main_processes = main_processes, model_units = model_units, geometry = geometry, print_options = print_options, water_flow_bcs = water_flow_bcs)
-edit_dat_file <- function(hydrus_model
-                          # main_processes,
-                          # model_units,
-                          # geometry,
-                          # print_options,
-                          # water_flow_bcs,
-                          # soil_hydraulics,
-                          # solute_options
-                          ){
+edit_dat_file <- function(hydrus_model){
 
 
 

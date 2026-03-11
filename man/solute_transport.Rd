@@ -2,15 +2,53 @@
 % Please edit documentation in R/organizing_functions.R
 \name{solute_transport}
 \alias{solute_transport}
-\title{Set solute trasnport parameters in a HYDRUS model}
+\title{Set solute transport parameters in a HYDRUS model}
 \usage{
-solute_transport(
+solute_transport(solute_transport_model = "equilibrium_model",
  standard_solute_transport = TRUE,
  number_solutes = 0,
- equilibrium_adsorption = FALSE
-)
+ equilibrium_adsorption = FALSE,
+ time_weighting_scheme = "crank_nickolson",
+ space_weighting_scheme = "galerkin_fe",
+ pulse_duration = 0,
+ stability_criterion = 1,
+ use_tortuosity = TRUE,
+ temperature_dependance = FALSE,
+ temperature_dependance_params = data.frame(NULL),
+ special_iteration_criteria = data.frame(absolute_conc_tol = 1,
+                                         relative_conc_tol = 1,
+                                         maximum_n_iteration = 1),
+ material_params = data.frame(bulk_density,
+                              longitudinal_dispersivity,
+                              fraction_adsorption_sites,
+                              immobile_water_content),
+ solute_params = data.frame(molecular_diffusion_free_water = 0,
+                            molecular_diffusion_soil_air = 0),
+ solute_reaction_params = data.frame(Kd = 0,
+                                     Nu = 0,
+                                     Beta = 1,
+                                     Henry = 0,
+                                     SnkL1 = 0,
+                                     SnkS1 = 0,
+                                     SnkG1 = 0,
+                                     SnkL1_prime = 0,
+                                     SnkS1_prime = 0,
+                                     SnkG1_prime = 0,
+                                     SnkL0 = 0,
+                                     SnkS0 = 0,
+                                     SnkG0 = 0,
+                                     Alpha = 0),
+ solute_transport_bcs = data.frame(upper_bc = "solute_flux_bc",
+                                   lower_bc = "concentration_bc",
+                                   in_total_concentrations = FALSE,
+                                   stagnant_boundary_layer = NA,
+                                   concentration_in_atmosphere = NA,
+                                   fractionation_ratio = NA)
+ )
 }
 \arguments{
+\item{solute_transport_model}{character string indicating which solute transport model to use. See details for options.}
+
 \item{solute_transport_bcs}{}
 }
 \value{
@@ -18,6 +56,13 @@ list of parameters
 }
 \description{
 Function to set solute_transport while maintaining unused default model parameters.
+}
+\details{
+\code{solute_transport_model} options:
+\describe{
+ \item{\code{"equilibrium_model"}}{Standard solute transport model}
+ \item{\code{"dual_perm_phys_non_equilibrium"}}{Dual permeability physical non-equilibrium mode}
+}
 }
 \examples{
 hydrus_model$solute_options <- solute_options(number_solutes = 1)
