@@ -56,7 +56,7 @@ edit_atmosph_file <- function(hydrus_model,
   }
 
   ## Get a basic ATMOSPH.IN template
-  atmosph_template <- readLines(file("./R/templates/ATMOSPH.IN"))
+  atmosph_template <- readLines(base::system.file("R", "inst", "templates", "ATMOSPH.IN", package = "runhydrus"), n = -1L, encoding = "unknown")
   ## write to project_path
   write(atmosph_template, file = file.path(hydrus_model$hydrus_project$project_path, "ATMOSPH.IN"))
 

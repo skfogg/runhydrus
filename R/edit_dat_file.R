@@ -9,8 +9,6 @@
 #' @examples edit_dat_file(hydrus_project, main_processes = main_processes, model_units = model_units, geometry = geometry, print_options = print_options, water_flow_bcs = water_flow_bcs)
 edit_dat_file <- function(hydrus_model){
 
-
-
    main_args <- c("HYDRUS_Version",
                  "WaterFlow",
                  "SoluteTransport",

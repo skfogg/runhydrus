@@ -7,10 +7,10 @@ Unsatchem=0
 HP1=0
 HeatTransport=0
 EquilibriumAdsorption=0
-MobileImmobile=0
-RootWaterUptake=0
-RootGrowth=1
-MaterialNumbers=0
+MobileImmobile=1
+RootWaterUptake=1
+RootGrowth=3
+MaterialNumbers=1
 SubregionNumbers=cm
 SpaceUnit=days
 TimeUnit=1
@@ -20,5 +20,5 @@ InitialCondition=1
 ;
 [Profile]
 NumberOfNodes=101
-ProfileDepth=1.00E+02
-ObservationNodes=101
+ProfileDepth=1.75E+02
+ObservationNodes=10

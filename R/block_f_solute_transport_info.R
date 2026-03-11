@@ -15,7 +15,10 @@ block_f_solute_transport_info <- function(hydrus_model){
   if(length(selector_template[grep("BLOCK F", selector_template)]) == 0){
     ## Add in BLOCK F:
     selector_template <- c(selector_template[1:(grep("END OF INPUT", selector_template)-1)],
-                           readLines(file.path("./templates/BLOCK_F_SOLUTE_TRANSPORT")))
+                           readLines(base::system.file("R", "inst", "templates", "BLOCK_F_SOLUTE_TRANSPORT", package = "runhydrus"),
+                                     n = -1L,
+                                     encoding = "unknown")
+                           )
   }
   ## Look-up tables:
   tws_options <- data.frame(option = c("crank-nickolson", "implicit_scheme", "explicit_scheme"),

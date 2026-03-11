@@ -33,7 +33,7 @@ fairfield_duel_perm$root_water_uptake <- root_water_uptake(root_water_uptake_mod
                                                                                                  h50 = -800,
                                                                                                  P3 = 3))
 ## STUFF that i'm changing to match meghans's input files:
-fairfield_duel_perm$solute_options <- solute_options(equilibrium_adsorption = TRUE)
+fairfield_duel_perm$solute_transport <- solute_transport(equilibrium_adsorption = TRUE)
 
 fairfield_duel_perm$soil_hydraulics <- soil_hydraulics(soil_hydraulic_model = 8,
                                                        surface_flow_into_fracture = 0.15,

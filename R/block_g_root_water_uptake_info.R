@@ -6,17 +6,22 @@
 #' @export
 #'
 #' @examples block_g_root_water_uptake_info(hydrus_model, root_water_uptake)
-block_g_root_water_uptake_info <- function(hydrus_model
-                                           # root_water_uptake = root_water_uptake
-){
+block_g_root_water_uptake_info <- function(hydrus_model){
 
   selector_template <- readLines(file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))
 
   if(length(selector_template[grep("BLOCK G", selector_template)]) == 0){
   ## Add in BLOCK G correctly formatted based on root_water_uptake_model selected:
-  selector_template <- c(selector_template[1:(grep("END OF INPUT", selector_template)-1)],
-                         readLines(file.path(paste0("./templates/BLOCK_G_ROOT_WATER_UPTAKE_",
-                                                    hydrus_model$root_water_uptake$root_water_uptake_model))))
+    selector_template <- c(selector_template[1:(grep("END OF INPUT", selector_template)-1)],
+                           readLines(base::system.file("R",
+                                                       "inst",
+                                                       "templates",
+                                                       paste0("BLOCK_G_ROOT_WATER_UPTAKE_",
+                                                              hydrus_model$root_water_uptake$root_water_uptake_model),
+                                                       package = "runhydrus"),
+                                     n = -1L,
+                                     encoding = "unknown")
+                         )
   }
 
   # *** BLOCK G: ROOT WATER UPTAKE INFORMATION ***

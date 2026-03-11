@@ -40,13 +40,13 @@ parameterize_hydrus_model <- function(hydrus_model){
   if(hydrus_model$time_variable_bc$time_variable_bc){
 
     ## Get a basic ATMOSPH.IN template
-    atmosph_template <- readLines(file("./templates/ATMOSPH.IN"))
+    atmosph_template <- readLines(base::system.file("R", "inst", "templates", "ATMOSPH.IN", package = "runhydrus"), n = -1L, encoding = "unknown")
     ## write to project_path
     write(atmosph_template, file = file.path(hydrus_model$hydrus_project$project_path, "ATMOSPH.IN"))
 
     if(hydrus_model$time_variable_bc$meteorological_data){
       ## Get a basic METEO.IN template
-      meteo_template <- readLines(file("./templates/METEO.IN"))
+      meteo_template <- readLines(base::system.file("R", "inst", "templates", "METEO.IN", package = "runhydrus"), n = -1L, encoding = "unknown")
       ## write to project_path
       write(meteo_template, file = file.path(hydrus_model$hydrus_project$project_path, "METEO.IN"))
     }
