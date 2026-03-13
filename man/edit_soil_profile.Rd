@@ -5,23 +5,48 @@
 \title{Set PROFILE.DAT file}
 \usage{
 edit_soil_profile(
-  hydrus_model,
-  mesh_density = data.frame(fixed_points = c(0, -101), upper_relative_size_fe = 1,
-    lower_relative_size_fe = 1),
-  set_mesh_nodes_manually = FALSE,
-  mesh_nodes_manual = data.frame(number = 1:101, z = -0:-100),
-  nodal_soil_properties = list(h = -101, root = 0, a_xz = 1, b_xz = 1, d_xz = 1, mat = 1,
-    lay = 1, temp = 20, conc = 0)
+ hydrus_model,
+ mesh_density = data.frame(fixed_points = c(0, -101),
+                           upper_relative_size_fe = 1.0,
+                           lower_relative_size_fe = 1.0),
+ set_mesh_nodes_manually = FALSE,
+ mesh_nodes_manual = data.frame(number = 1:101,
+                                z = -0:-100),
+ nodal_soil_properties = list(h = -101,
+                              root = 0,
+                              a_xz = 1,
+                              b_xz = 1,
+                              d_xz = 1,
+                              mat = 1,
+                              lay = 1,
+                              temp = 20,
+                              conc = 0)
 )
 }
 \arguments{
-\item{nodal_soil_properties}{}
+\item{hydrus_model}{a hydrus model created with \code{\link{create_hydrus_project}}}
+
+\item{mesh_density}{data.frame of parameters needed for the mesh density calculation. See details.}
+
+\item{set_mesh_nodes_manually}{logical. If FALSE, will use the parameters in the \code{mesh_density} data.frame. If TRUE, you set your own mesh node locations in the \code{mesh_nodes_manual} data.frame.}
+
+\item{mesh_nodes_manual}{data.frame of mesh number and locations when setting mesh nodes manually.}
+
+\item{nodal_soil_properties}{data.frame of nodal soil properties}
 }
 \value{
 edits PROFILE.DAT file
 }
 \description{
 Set PROFILE.DAT file
+}
+\details{
+\describe{
+ \item{\code{mesh_density}}{Column names of data.frame must be \code{"fixed_points"}, \code{"upper_relative_size_fe"}, and \code{"lower_relative_size_fe"}. Finite element (FE) sizes are proportionally distributed according to \code{"upper_relative_size_fe"} and \code{"lower_relative_size_fe"} between the fixed points provided.}
+ \item{\code{mesh_nodes_manual}}{Column names of data.frame must be \code{"number"} and \code{"z"}. Number is the nodes ID number and z is the coordinate depth.}
+ \item{\code{nodal_soil_properties}}{Column names of data.frame must be \code{"h"} (initial pressure head or water content), \code{"root"} (depth distribution of root water uptake, equal to 0 is node lies outside of root zone), \code{"a_xz"} (nodal value of dimensionless scaling factor associated with pressure head), \code{"b_xz"} (nodal value of dimensionless scaling factor associated with saturated hydraulic conductivity), \code{"d_xz"} (nodal value of dimensionless scaling factor associated with water content), \code{"mat"} (material), \code{"lay"} (subregion), \code{"temp"} (iniital nodal temperature), and \code{"conc"} (initial nodal concentration).
+ }
+}
 }
 \examples{
 edit_soil_profile(hydrus_model)

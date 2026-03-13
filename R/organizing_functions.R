@@ -581,12 +581,12 @@ root_growth <- function(root_growth_depth = 0,
 #'  temperature_dependence = FALSE,
 #'  temperature_dependence_params = data.frame(NULL),
 #'  special_iteration_criteria = data.frame(absolute_conc_tol = 1,
-#'                                          relative_conc_tol = 1,
-#'                                          maximum_n_iteration = 1),
-#'  material_params = data.frame(bulk_density,
-#'                               longitudinal_dispersivity,
-#'                               fraction_adsorption_sites,
-#'                               immobile_water_content),
+#'                                          relative_conc_tol = 0.001,
+#'                                          maximum_n_iteration = 10),
+#'  material_params = data.frame(bulk_density = 1,
+#'                               longitudinal_dispersivity = 1.5,
+#'                               fraction_adsorption_sites = 17.5,
+#'                               immobile_water_content = 0),
 #'  solute_params = data.frame(molecular_diffusion_free_water = 0,
 #'                             molecular_diffusion_soil_air = 0),
 #'  solute_reaction_params = data.frame(Kd = 0,
@@ -612,28 +612,75 @@ root_growth <- function(root_growth_depth = 0,
 #'  )
 #'
 #' @param solute_transport_model character string indicating which solute transport model to use. See details for options.
-#' @param number_solutes
-#' @param equilibrium_adsorption
-#' @param time_weighting_scheme
-#' @param space_weighting_scheme
-#' @param pulse_duration
-#' @param stability_criterion
-#' @param use_tortuosity
-#' @param temperature_dependence
-#' @param temperature_dependence_params
-#' @param special_iteration_criteria
-#' @param material_params
-#' @param solute_params
-#' @param solute_reaction_params
-#' @param solute_transport_bcs
+#' @param number_solutes integer, number of solutes.
+#' @param equilibrium_adsorption logical.
+#' @param time_weighting_scheme character string indicating which temporal weighting coefficient to use. See details for options.
+#' @param space_weighting_scheme character string indicating the spatial weighting scheme formulation. See details for options.
+#' @param pulse_duration integer indicating the duration of pulse
+#' @param stability_criterion numeric. Product of the dimensionless Peclet and Curant numbers. Used to add artificial dispersion when using the \code{"gfe_with_artificial_disp"} space weighting scheme. Used to limit the time step (causing lower Courant numbers for a given Peclet number) for the \code{"galerkin_fe"} space weighting scheme.
+#' @param use_tortuosity logical. TRUE when molecular diffusion coefficients in the water and gas phases are to be multiplied by a tortuosity factor according to the formulation of either Millington and Quirk (1961) or Moldrup et al. (1997, 2000).
+#' @param temperature_dependence logical. TRUE when solute transport and reation parameters are to be temperature dependent.
+#' @param temperature_dependence_params data.frame of temperature dependence parameters. See details.
+#' @param nonlinear_adsorption_iteration_criteria data.frame of non-linear adsorption iteration criteria. See detail.
+#' @param material_params data.frame of solute transport parameters of each soil material. See details for required columns.
+#' @param solute_params data.frame of solute specific parameters. Columns must be \code{"molecular_diffusion_free_water"} and \code{"molecular_diffusion_soil_air"}.
+#' @param solute_reaction_params data.frame of solute reaction parameters. See details.
+#' @param solute_transport_bcs data.frame of solute transport boundary conditions. See details.
 #'
 #' @returns list of parameters
 #' @export
 #'
-#' @details \code{solute_transport_model} options:
+#' @details
+#' \code{solute_transport_model} options:
 #' \describe{
 #'  \item{\code{"equilibrium_model"}}{Standard solute transport model}
-#'  \item{\code{"dual_perm_phys_non_equilibrium"}}{Dual permeability physical non-equilibrium mode}
+#'  \item{\code{"dual_perm_phys_non_equilibrium"}}{Dual permeability physical non-equilibrium model}
+#'  \item{\code{"dual_permeability"}}{Dual-Permeability model with either immobile water in the matrix or kinetic soption (chemical and physical non-equilibrium)}
+#' }
+#' \code{time_weighting_scheme} options:
+#' \describe{
+#'  \item{\code{"crank-nicolson"}}{temporal weighting coefficient = 0.5. Recommended for solution precision.}
+#'  \item{\code{"implicit_scheme"}}{temporal weighting coefficient = 1.0. May result in increased numerical dispersion, but reduce numerical instabilities.}
+#' }
+#' \code{space_weighting_scheme} options:
+#' \describe{
+#'  \item{\code{"galerkin_fe"}}{}
+#'  \item{\code{"upstream_weighting_fe"}}{}
+#'  \item{\code{"gfe_with_artificial_disp"}}{}
+#' }
+#'
+#' \code{temperature_dependence_params} data.frame must have columns:
+#'
+#' \code{nonlinear_adsorption_iteration_criteria} data.frame must have columns: \code{"absolute_conc_tol"}, \code{"relative_conc_tol"}, and \code{"maximum_n_iteration"}. Recommended values are 0.001 for \code{"relative_conc_tol"} and 10 for \code{"maximum_n_iteration"}.
+#'
+#' \code{material_parameters} data.frame must have columns: \code{"bulk_density"}, \code{"longitudinal_dispersivity"}, \code{"fraction_adsorption_sites"}, and \code{"immobile_water_content"}.
+#'
+#' \code{solute_reaction_params} data.frame must have columns:
+#' \itemize{
+#'  \item{\code{"Kd"}}
+#'  \item{\code{"Nu"}}
+#'  \item{\code{"Beta"}}
+#'  \item{\code{"Henry"}}
+#'  \item{\code{"SnkL1"}}
+#'  \item{\code{"SnkS1"}}
+#'  \item{\code{"SnkG1"}}
+#'  \item{\code{"SnkL1_prime"}}
+#'  \item{\code{"SnkS1_prime"}}
+#'  \item{\code{"SnkG1_prime"}}
+#'  \item{\code{"SnkL0"}}
+#'  \item{\code{"SnkS0"}}
+#'  \item{\code{"SnkG0"}}
+#'  \item{\code{"Alpha"}}
+#'  }
+#'
+#' \code{solute_transport_bcs} data.frame must have columns:
+#' \describe{
+#' \item{upper_bc}{options include: \code{"concentration_bc"}, \code{"solute_flux_bc"}, \code{"stagnant_bc_volotile_solute"}, \code{"isotope_bc"}}
+#' \item{lower_bc}{options include: \code{"concentration_bc"}, \code{"solute_flux_bc"}, \code{"zero_conc_gradient"}}
+#' \item{in_total_concentrations}{logical indicating if initial conditions should be in total concentrations, mass of solute/mass of soil (TRUE), instead of liquid phase concnetrations, mass of solute/volume water (default; FALSE)}
+#' \item{stagnant_boundary_layer} only used when \code{upper_bc = "stagnant_bc_volotile_solute"}
+#' \item{concentration_in_atmosphere} only used when \code{upper_bc = "stagnant_bc_volotile_solute"}
+#' \item{fractionation_ratio} only used when \code{upper_bc = "isotope_bc"}
 #' }
 #'
 #' @examples hydrus_model$solute_transport <- solute_transport(number_solutes = 1)
@@ -648,13 +695,14 @@ solute_transport <- function(solute_transport_model = "equilibrium_model",
                              use_tortuosity = TRUE,
                              temperature_dependence = FALSE,
                              temperature_dependence_params = data.frame(NULL),
-                             special_iteration_criteria = data.frame(absolute_conc_tol = 1,
-                                                                     relative_conc_tol = 1,
-                                                                     maximum_n_iteration = 1),
-                             material_params = data.frame(bulk_density = NA,
-                                                          longitudinal_dispersivity = NA,
-                                                          fraction_adsorption_sites = NA,
-                                                          immobile_water_content = NA),
+                             nonlinear_adsorption_iteration_criteria = data.frame(absolute_conc_tol = 1,
+                                                                                  relative_conc_tol = 0.001,
+                                                                                  maximum_n_iteration = 10),
+                             material_params = data.frame(material = 1,
+                                                          bulk_density = 1.5,
+                                                          longitudinal_dispersivity = 17.5,
+                                                          fraction_adsorption_sites = 1,
+                                                          immobile_water_content = 0),
                              solute_params = data.frame(molecular_diffusion_free_water = 0,
                                                         molecular_diffusion_soil_air = 0),
                              solute_reaction_params = data.frame(Kd = 0,

@@ -42,9 +42,9 @@ block_f_solute_transport_info <- function(hydrus_model){
                                                                               sws_options[option == hydrus_model$solute_transport$space_weighting_scheme, "lUpW"],
                                                                               sws_options[option == hydrus_model$solute_transport$space_weighting_scheme, "lArtD"],
                                                                               ifelse(hydrus_model$solute_transport$temperature_dependence, "t", "f"),
-                                                                              hydrus_model$solute_transport$special_iteration_criteria$absolute_conc_tol,
-                                                                              hydrus_model$solute_transport$special_iteration_criteria$relative_conc_tol,
-                                                                              hydrus_model$solute_transport$special_iteration_criteria$maximum_n_iteration,
+                                                                              hydrus_model$solute_transport$nonlinear_adsorption_iteration_criteria$absolute_conc_tol,
+                                                                              hydrus_model$solute_transport$nonlinear_adsorption_iteration_criteria$relative_conc_tol,
+                                                                              hydrus_model$solute_transport$nonlinear_adsorption_iteration_criteria$maximum_n_iteration,
                                                                               hydrus_model$solute_transport$stability_criterion,
                                                                               hydrus_model$solute_transport$number_solutes,
                                                                               ifelse(hydrus_model$solute_transport$use_tortuosity, "t", "f"),
@@ -188,7 +188,7 @@ block_f_solute_transport_info <- function(hydrus_model){
 # # "dual_permeability" (model with either immoblie water in
 # # the matrix or kinetic sorption (physical and chemical nonequilibrium)), iNonEqul = 8
 #
-# special_iteration_criteria #(needed only for nonlinear adsorption or blocking functions)
+# nonlinear_adsorption_iteration_criteria #(needed only for nonlinear adsorption or blocking functions)
 # # cTolA = absolute_concentration_tolerance
 # # cTolR = relative_concentration_tolerance (num between 0 and 1)
 # # MaxItC = maximum_n_iteration
