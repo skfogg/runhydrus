@@ -636,7 +636,7 @@ root_growth <- function(root_growth_depth = 0,
 #'  \item{\code{"dual_perm_phys_non_equilibrium"}}{Dual permeability physical non-equilibrium mode}
 #' }
 #'
-#' @examples hydrus_model$solute_options <- solute_options(number_solutes = 1)
+#' @examples hydrus_model$solute_transport <- solute_transport(number_solutes = 1)
 solute_transport <- function(solute_transport_model = "equilibrium_model",
                              #standard_solute_transport = TRUE,
                              number_solutes = 0,

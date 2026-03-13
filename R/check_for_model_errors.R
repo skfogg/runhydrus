@@ -43,7 +43,7 @@ check_for_model_errors <- function(hydrus_model){
              Required parameters (data.frame columns) are: 'material', theta_r', 'theta_s', 'alpha', 'n', 'K_s', and 'l'.")
       }
     }else{
-      if(!all(names(hydrus_model$soil_hydrualics$soil_hydraulic_parameters) %in% c("material", "theta_r", "theta_s", "alpha", "n", "K_s", "l", "theta_m", "theta_sW", "alphaW", "K_sW"))){
+      if(!all(names(hydrus_model$soil_hydraulics$soil_hydraulic_parameters) %in% c("material", "theta_r", "theta_s", "alpha", "n", "K_s", "l", "theta_m", "theta_sW", "alphaW", "K_sW"))){
         stop("Error in soil_hydraulics$soil_hydraulic_parameters: Soil hydraulic model is 0 or 3 with hysteresis.
              Required parameters (data.frame columns)  are: 'material', 'theta_r', 'theta_s', 'alpha', 'n', 'K_s', 'l', 'theta_m', 'theta_sW', 'alphaW', 'K_sW.")
       }

@@ -79,13 +79,9 @@ parameterize_hydrus_model <- function(hydrus_model){
     stop("hydrus_model$main_processes$heat_transport not available yet")
   }
 
-  if(hydrus_model$main_processes$solute_transport){
-    block_f_solute_transport_info(hydrus_model)
-  }
-
   #### *** BLOCK F: SOLUTE TRANSPORT INFORMATION *** ####
   if(hydrus_model$main_processes$solute_transport){
-    stop("hydrus_model$main_processes$solute_transport not available yet")
+    block_f_solute_transport_info(hydrus_model)
   }
 
   #### **** BLOCK G: ROOT WATER UPTAKE INFORMATION *** ####

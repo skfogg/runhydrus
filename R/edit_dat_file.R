@@ -1,6 +1,6 @@
 #' Title
 #'
-#' @param hydrus_project a hydrus project object created with
+#' @param hydrus_model a hydrus project object created with
 #'   'create_hydrus_project'
 #'
 #' @returns Edits the .DAT file of the HYRDUS project
@@ -41,7 +41,7 @@ edit_dat_file <- function(hydrus_model){
                                                  as.numeric(hydrus_model$main_processes$unsatchem),
                                                  as.numeric(hydrus_model$main_processes$HP1),
                                                  as.numeric(hydrus_model$main_processes$heat_transport),
-                                                 as.numeric(hydrus_model$solute_options$equilibrium_adsorption),
+                                                 as.numeric(hydrus_model$solute_transport$equilibrium_adsorption),
                                                  as.numeric(hydrus_model$soil_hydraulics$mobile_immobile),
                                                  as.numeric(hydrus_model$main_processes$root_water_uptake),
                                                  as.numeric(hydrus_model$main_processes$root_growth),
@@ -50,7 +50,7 @@ edit_dat_file <- function(hydrus_model){
                                                  hydrus_model$model_units$space_unit,
                                                  hydrus_model$model_units$time_unit,
                                                  as.numeric(nrow(hydrus_model$print_options$times_to_print)),
-                                                 hydrus_model$solute_options$number_solutes,
+                                                 hydrus_model$solute_transport$number_solutes,
                                                  as.numeric(hydrus_model$water_flow_bcs$initial_condition)
                                                  # "0",
                                                  # "0",

@@ -5,7 +5,7 @@
 #' @returns edits BLOCK G of SELECTOR.IN
 #' @export
 #'
-#' @examples block_g_root_water_uptake_info(hydrus_model, root_water_uptake)
+#' @examples block_g_root_water_uptake_info(hydrus_model)
 block_g_root_water_uptake_info <- function(hydrus_model){
 
   selector_template <- readLines(file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))
@@ -129,7 +129,7 @@ block_g_root_water_uptake_info <- function(hydrus_model){
                                                                                rep(" ", times = 6),
                                                                                hydrus_model$root_water_uptake$root_water_uptake_params$a,
                                                                                rep(" ", times = 6),
-                                                                               hydrus_model$root_water_uptake$root_water_uptake_params$H-Wilt))
+                                                                               hydrus_model$root_water_uptake$root_water_uptake_params$`H-Wilt`))
   }
 
   ## Update SELECTOR.IN

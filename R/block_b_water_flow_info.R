@@ -153,7 +153,7 @@ block_b_water_flow_info <- function(hydrus_model){
   ## ---------------------------------------------------------------------------
   ## Insert constant flux boundary condition parameters
   ### IF water_flux_bc$upper_bc = 'constant flux' then add 'rTop rBot rRoot' lines if they do not exist:
-  if(hydrus_model$water_flow_bc$upper_bc == "constant_flux"){
+  if(hydrus_model$water_flow_bcs$upper_bc == "constant_flux"){
     if(length(grep("rTop", selector_template)) == 0){
       selector_template <- c(selector_template[1:(grep("BotInf", selector_template) + 1)],
                              stringr::str_flatten(c(rep(" ", times = 9),

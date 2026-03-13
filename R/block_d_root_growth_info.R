@@ -5,7 +5,7 @@
 #' @returns edits BLOCK D of SELECTOR.IN
 #' @export
 #'
-#' @examples block_d_root_growth_info(hydrus_project, root_growth)
+#' @examples block_d_root_growth_info(hydrus_model)
 block_d_root_growth_info <- function(hydrus_model
                                      # root_growth = root_growth
 
