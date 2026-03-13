@@ -13,9 +13,7 @@ block_g_root_water_uptake_info <- function(hydrus_model){
   if(length(selector_template[grep("BLOCK G", selector_template)]) == 0){
   ## Add in BLOCK G correctly formatted based on root_water_uptake_model selected:
     selector_template <- c(selector_template[1:(grep("END OF INPUT", selector_template)-1)],
-                           readLines(base::system.file("R",
-                                                       "inst",
-                                                       "templates",
+                           readLines(base::system.file("templates",
                                                        paste0("BLOCK_G_ROOT_WATER_UPTAKE_",
                                                               hydrus_model$root_water_uptake$root_water_uptake_model),
                                                        package = "runhydrus"),

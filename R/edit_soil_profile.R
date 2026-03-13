@@ -40,7 +40,7 @@ edit_soil_profile <- function(hydrus_model,
 
   ## Get PROFILE.DAT file of project
   profile_connection <- file.path(paste0(hydrus_model$hydrus_project$project_path, "/PROFILE.DAT"))
-  profile_template <- readLines(system.file("R", "inst", "templates", "PROFILE.DAT", package = "runhydrus"),
+  profile_template <- readLines(system.file("templates", "PROFILE.DAT", package = "runhydrus"),
                                 n = -1L, encoding = "unknown")
 
   profile_template[grep("Pcp", profile_template)+1] <- stringr::str_flatten(c(rep(" ", times = 4),

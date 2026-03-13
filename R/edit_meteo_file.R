@@ -92,7 +92,7 @@ edit_meteo_file <- function(hydrus_model,
   ## NEED TO ADD ERROR CHECKING
 
   ## Get a basic MATEO.IN template
-  meteo_template <- readLines(base::system.file("R", "inst", "templates", "METEO.IN", package = "runhydrus"), n = -1L, encoding = "unknown")
+  meteo_template <- readLines(base::system.file("templates", "METEO.IN", package = "runhydrus"), n = -1L, encoding = "unknown")
   ## write to project_path
   write(meteo_template, file = file.path(hydrus_model$hydrus_project$project_path, "METEO.IN"))
 

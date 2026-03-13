@@ -17,9 +17,7 @@ block_d_root_growth_info <- function(hydrus_model
   if(length(selector_template[grep("BLOCK D", selector_template)]) == 0){
     ## Add in BLOCK D correctly formatted based on root_growth_depth model selected:
     selector_template <- c(selector_template[1:(grep("END OF INPUT", selector_template)-1)],
-                           readLines(base::system.file("R",
-                                                       "inst",
-                                                       "templates",
+                           readLines(base::system.file("templates",
                                                        paste0("BLOCK_D_ROOT_GROWTH_",
                                                               hydrus_model$root_growth$root_growth_depth),
                                                        package = "runhydrus"),
