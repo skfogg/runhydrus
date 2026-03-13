@@ -86,7 +86,7 @@ edit_atmosph_file(fairfield_dual_perm,
                   max_h_at_surface = 0)
 
 ## Soil Profile Mesh:
-soil_profile_mesh(fairfield_dual_perm,
+edit_soil_profile(fairfield_dual_perm,
                   mesh_density = data.frame(fixed_points = c(0, -175),
                                             upper_relative_size_fe = 1.0,
                                             lower_relative_size_fe = 1.0),

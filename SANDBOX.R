@@ -17,7 +17,7 @@ hydrus_model <- parameterize_hydrus_model(hydrus_project,
                                                                 lower_bc = "free_drainage",
                                                                 triggered_irrigation = FALSE))
 
-soil_profile_mesh(hydrus_model,
+edit_soil_profile(hydrus_model,
                   mesh_density = data.frame(fixed_points = c(0, -hydrus_model$geometry$profile_depth),
                                             upper_relative_size_fe = 2.0,
                                             lower_relative_size_fe = 2.0))

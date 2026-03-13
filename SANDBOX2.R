@@ -111,7 +111,7 @@ edit_meteo_file(fairfield_duel_perm,
                                                root_depth = 0))
 
 
-soil_profile_mesh(fairfield_duel_perm,
+edit_soil_profile(fairfield_duel_perm,
                   mesh_density = data.frame(fixed_points = c(0, -175),
                                             upper_relative_size_fe = 1.0,
                                             lower_relative_size_fe = 1.0),
