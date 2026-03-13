@@ -3,7 +3,7 @@
 #' @param hydrus_model a hydrus model created with \code{\link{create_hydrus_project}}
 #'
 #' @returns edits BLOCK D of SELECTOR.IN
-#' @export
+#' @noRd
 #'
 #' @examples block_d_root_growth_info(hydrus_model)
 block_d_root_growth_info <- function(hydrus_model

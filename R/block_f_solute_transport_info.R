@@ -3,7 +3,7 @@
 #' @param hydrus_model a hydrus model created with \code{\link{create_hydrus_project}}
 #'
 #' @returns edits SELECTOR.IN file
-#' @export
+#' @noRd
 #'
 #' @examples block_f_solute_transport_info(hydrus_model)
 #'

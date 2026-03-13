@@ -3,7 +3,7 @@
 #' @param hydrus_model a hydrus model created with \code{\link{create_hydrus_project}}
 #'
 #' @returns Edits BLOCK A of SELECTOR.IN file associated with the input hydrus_model
-#' @export
+#' @noRd
 #'
 #' @examples block_a_basic_info(hydrus_model)
 #'

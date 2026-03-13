@@ -3,7 +3,7 @@
 #' @param hydrus_model a hydrus model created with \code{\link{create_hydrus_project}}
 #'
 #' @returns edits BLOCK C of SELECTOR.IN
-#' @export
+#' @noRd
 #'
 #' @importFrom stringr str_flatten
 #'

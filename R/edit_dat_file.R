@@ -4,7 +4,7 @@
 #'   'create_hydrus_project'
 #'
 #' @returns Edits the .DAT file of the HYRDUS project
-#' @export
+#' @noRd
 #'
 #' @examples edit_dat_file(hydrus_model)
 edit_dat_file <- function(hydrus_model){

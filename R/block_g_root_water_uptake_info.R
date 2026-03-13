@@ -3,7 +3,7 @@
 #' @param hydrus_model a hydrus model created with \code{\link{create_hydrus_project}}
 #'
 #' @returns edits BLOCK G of SELECTOR.IN
-#' @export
+#' @noRd
 #'
 #' @examples block_g_root_water_uptake_info(hydrus_model)
 block_g_root_water_uptake_info <- function(hydrus_model){
