@@ -1,3 +1,62 @@
+#' Edit the METEO.IN file
+#'
+#' @usage edit_meteo_file(
+#'  radiation_type = "potential_radiation", # solar_radiation, net_radiation
+#'  et_equation = "penman-monteith", # hargreaves
+#'  cloudiness_option = "sunshine", #cloudiness, transmission_c, solar_radiation
+#'  penman_montieth_option = "relative_humidity", # vapor_pressure
+#'  crop_option = "no_crop", # constant, tables, daily
+#'  latitude = 40,
+#'  altitude = 110,
+#'  sw_angstrom_a = 0.25,
+#'  sw_angstrom_b = 0.5,
+#'  sw_cloudiness_a = 1.35,
+#'  sw_cloudiness_b = -0.35,
+#'  lw_cloudiness_a = 0.9,
+#'  lw_cloudiness_b = 0.1,
+#'  lw_emissivity_a = 0.34,
+#'  lw_emissivity_b = -0.139,
+#'  windspeed_meas_height = 200,
+#'  temp_meas_height = 200,
+#'  albedo = 0.23,
+#'  meteo_time_series = data.frame(time = 1,
+#'                                 radiation = 300,
+#'                                 temp_max = 20,
+#'                                 temp_min = 10,
+#'                                 rh_mean = 95,
+#'                                 windspeed = 30,
+#'                                 sun_hours = 4,
+#'                                 crop_height = 0,
+#'                                 albedo = 0,
+#'                                 lai = 0,
+#'                                 root_depth = 0)
+#' )
+#'
+#' @param hydrus_model a hydrul_model
+#' @param radiation_type character string indicating radiation type. See details.
+#' @param et_equation character string indicating evapotranspiration equation. See details.
+#' @param cloudiness_option character string indicating the cloudiness option. See detail.
+#' @param penman_montieth_option character string indicating the Penman-Montieth calculation option. See details.
+#' @param crop_option character sting indicating how to input crop data. See details.
+#' @param latitude numeric
+#' @param altitude numeric
+#' @param sw_angstrom_a numeric
+#' @param sw_angstrom_b numeric
+#' @param sw_cloudiness_a numeric
+#' @param sw_cloudiness_b numeric
+#' @param lw_cloudiness_a numeric
+#' @param lw_cloudiness_b numeric
+#' @param lw_emissivity_a numeric
+#' @param lw_emissivity_b numeric
+#' @param windspeed_meas_height numeric
+#' @param temp_meas_height numeric
+#' @param albedo numeric
+#' @param meteo_time_series data frame of meteorologival data
+#'
+#' @returns edits METEO.IN file
+#' @export
+#'
+#' @examples edit_meteo_file(hydrus_model, cloudiness_option = "cloudiness")
 edit_meteo_file <- function(hydrus_model,
                             radiation_type = "potential_radiation", # solar_radiation, net_radiation
                             et_equation = "penman-monteith", # hargreaves

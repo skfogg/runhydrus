@@ -1,4 +1,4 @@
-#' Title
+#' Edits the HYDRUS1D.DAT file
 #'
 #' @param hydrus_model a hydrus project object created with
 #'   'create_hydrus_project'
@@ -6,7 +6,7 @@
 #' @returns Edits the .DAT file of the HYRDUS project
 #' @export
 #'
-#' @examples edit_dat_file(hydrus_project, main_processes = main_processes, model_units = model_units, geometry = geometry, print_options = print_options, water_flow_bcs = water_flow_bcs)
+#' @examples edit_dat_file(hydrus_model)
 edit_dat_file <- function(hydrus_model){
 
    main_args <- c("HYDRUS_Version",

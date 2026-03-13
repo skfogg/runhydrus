@@ -5,10 +5,10 @@
 #' @param show_output Logical (Default = TRUE) whether the shell
 #'                    output should be visible on R console (relevant only on windows)
 #'
-#' @return
+#' @return runs a HYDRUS model
 #' @export
 #'
-#' @examples
+#' @examples run_hydrus_1D(hydrus_model)
 
 run_hydrus_1D <- function(hydrus_model,
                           hydrus_path = NULL,

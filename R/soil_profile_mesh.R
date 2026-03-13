@@ -6,10 +6,10 @@
 #' @param mesh_nodes_manual
 #' @param nodal_soil_properties
 #'
-#' @returns
+#' @returns edits PROFILE.DAT file
 #' @export
 #'
-#' @examples
+#' @examples soil_profile_mesh(hydrus_model)
 soil_profile_mesh <- function(hydrus_model,
                               mesh_density = data.frame(fixed_points = c(0, -101),
                                                         upper_relative_size_fe = 1.0,

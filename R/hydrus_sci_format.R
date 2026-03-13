@@ -1,3 +1,11 @@
+#' Formats numbers into HYDRUS-specific scientific format
+#'
+#' @param df a data.frame of numerics
+#'
+#' @returns a data.frame with the numerics converted to the correct scientific formatting as a character string
+#' @export
+#'
+#' @examples hydrus_sci_format(data.frame(x = 175.0))
 hydrus_sci_format <- function(df){
 
   df <- format(df, scientific = TRUE)

@@ -1,3 +1,22 @@
+#' Edit the ATMPOSH.IN file of a HYDRUS model
+#'
+#' @usage edit_atmosph_file(
+#'  hydrus_model,
+#'  atm_time_series = data.frame(time = 1,
+#'                               precip = 0,
+#'                               evap = 0,
+#'                               min_pressure_head = 100000),
+#'  max_h_at_surface = 0
+#' )
+#'
+#' @param hydrus_model a hydrus_model
+#' @param atm_time_series data.frame of time-variable atmospheric data
+#' @param max_h_at_surface maximum head at soil surface
+#'
+#' @returns edits the ATMOSPH.IN file
+#' @export
+#'
+#' @examples edit_atmosph_file(hydrus_model, max_h_at_surface = 5)
 edit_atmosph_file <- function(hydrus_model,
                               atm_time_series = data.frame(time = 1,
                                                                precip = 0,

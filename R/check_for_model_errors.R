@@ -1,3 +1,11 @@
+#' HYDRUS model logic check
+#'
+#' @param hydrus_model
+#'
+#' @returns returns nothing if no errors, will stop function and output error if there is any in the HYDRUS model parameterization
+#' @export
+#'
+#' @examples check_for_model_errors(hydrus_model)
 check_for_model_errors <- function(hydrus_model){
   if(hydrus_model$geometry$observation_nodes_n > 0){
     if(anyNA(hydrus_model$geometry$observation_nodes)){

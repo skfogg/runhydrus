@@ -1,19 +1,5 @@
 #' Set Time Parameters in BLOCK C of SELECTOR.IN
 #'
-#' desc
-#'
-#' Time parameters are all numeric and in the 'time_unit' of the 'hydrus_model'.
-#' Time parameters include 'initial_time_step', 'minimum time step', 'maximum
-#' time step', 'lower_time_step_mult', 'upper_time_step_mult',
-#' 'lower_optim_iter_range', 'upper_optim_iter_range', 'initial model time',
-#' 'final_model_time'. Print options include 'print_times', a data.frame with one column of 'times' to
-#' print out. 'interval_output_option' is a logical indicating to turn on interval output
-#' (default is off, FALSE). 'interval_output' is used when
-#' 'interval_output_option = TRUE' and specfies the interval to output.
-#' 'print_time_interval' is a logical indicating whether or not to print time
-#' information (default on, TRUE). 'time_info_print_every_n_time_steps', default 1, print time interval.
-#'
-#'
 #' @param hydrus_model a hydrus model created with \code{\link{create_hydrus_project}}
 #'
 #' @returns edits BLOCK C of SELECTOR.IN
@@ -21,11 +7,8 @@
 #'
 #' @import stringr
 #'
-#' @examples block_c_time_info(hydrus_project, time_parameters = time_parameters, print_options = print_options)
-block_c_time_info <- function(hydrus_model
-                              # time_parameters = time_parameters,
-                              # print_options = print_options
-                              ){
+#' @examples block_c_time_info(hydrus_model)
+block_c_time_info <- function(hydrus_model                              ){
 
 
   selector_template <- readLines(file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))
@@ -74,5 +57,17 @@ block_c_time_info <- function(hydrus_model
   cat("Updated BLOCK C: TIME INFORMATION of SELECTOR.IN file... \n")
 
 }
+
+#Time parameters are all numeric and in the 'time_unit' of the 'hydrus_model'.
+# Time parameters include 'initial_time_step', 'minimum time step', 'maximum
+# time step', 'lower_time_step_mult', 'upper_time_step_mult',
+# 'lower_optim_iter_range', 'upper_optim_iter_range', 'initial model time',
+# 'final_model_time'. Print options include 'print_times', a data.frame with one column of 'times' to
+# print out. 'interval_output_option' is a logical indicating to turn on interval output
+# (default is off, FALSE). 'interval_output' is used when
+# 'interval_output_option = TRUE' and specfies the interval to output.
+# 'print_time_interval' is a logical indicating whether or not to print time
+# information (default on, TRUE). 'time_info_print_every_n_time_steps', default 1, print time interval.
+#
 
 

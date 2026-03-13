@@ -78,7 +78,7 @@ main_processes <- function(water_flow = TRUE,
 #' @export
 #'
 #' @examples hydrus_model$model_units <- model_units(time_unit = "seconds",
-#'                                                   space_unit = "mm)
+#'                                                   space_unit = "mm")
 model_units <- function(time_unit = "days",
                         space_unit = "cm",
                         mass_unit= "mmol"){
@@ -578,8 +578,8 @@ root_growth <- function(root_growth_depth = 0,
 #'  pulse_duration = 0,
 #'  stability_criterion = 1,
 #'  use_tortuosity = TRUE,
-#'  temperature_dependance = FALSE,
-#'  temperature_dependance_params = data.frame(NULL),
+#'  temperature_dependence = FALSE,
+#'  temperature_dependence_params = data.frame(NULL),
 #'  special_iteration_criteria = data.frame(absolute_conc_tol = 1,
 #'                                          relative_conc_tol = 1,
 #'                                          maximum_n_iteration = 1),
@@ -619,8 +619,8 @@ root_growth <- function(root_growth_depth = 0,
 #' @param pulse_duration
 #' @param stability_criterion
 #' @param use_tortuosity
-#' @param temperature_dependance
-#' @param temperature_dependance_params
+#' @param temperature_dependence
+#' @param temperature_dependence_params
 #' @param special_iteration_criteria
 #' @param material_params
 #' @param solute_params
@@ -646,8 +646,8 @@ solute_transport <- function(solute_transport_model = "equilibrium_model",
                              pulse_duration = 0,
                              stability_criterion = 1,
                              use_tortuosity = TRUE,
-                             temperature_dependance = FALSE,
-                             temperature_dependance_params = data.frame(NULL),
+                             temperature_dependence = FALSE,
+                             temperature_dependence_params = data.frame(NULL),
                              special_iteration_criteria = data.frame(absolute_conc_tol = 1,
                                                                      relative_conc_tol = 1,
                                                                      maximum_n_iteration = 1),
@@ -686,8 +686,8 @@ solute_transport <- function(solute_transport_model = "equilibrium_model",
               pulse_duration = pulse_duration,
               stability_criterion  = stability_criterion,
               use_tortuosity = use_tortuosity,
-              temperature_dependance = temperature_dependance,
-              temperature_dependance_params = temperature_dependance_params,
+              temperature_dependence = temperature_dependence,
+              temperature_dependence_params = temperature_dependence_params,
               special_iteration_criteria = special_iteration_criteria,
               material_params = material_params,
               solute_params = solute_params,
