@@ -16,5 +16,5 @@ edits BLOCK D of SELECTOR.IN
 Set Block D of SELECTOR.IN: Root Growth Information
 }
 \examples{
-block_d_root_growth_info(hydrus_project, root_growth)
+block_d_root_growth_info(hydrus_model)
 }

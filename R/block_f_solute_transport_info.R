@@ -7,7 +7,7 @@
 #'
 #' @examples block_f_solute_transport_info(hydrus_model)
 #'
-#' @import stringr
+#' @importFrom stringr str_flatten str_split
 block_f_solute_transport_info <- function(hydrus_model){
 
   selector_template <- readLines(file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))

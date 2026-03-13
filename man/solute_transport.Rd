@@ -13,8 +13,8 @@ solute_transport(solute_transport_model = "equilibrium_model",
  pulse_duration = 0,
  stability_criterion = 1,
  use_tortuosity = TRUE,
- temperature_dependance = FALSE,
- temperature_dependance_params = data.frame(NULL),
+ temperature_dependence = FALSE,
+ temperature_dependence_params = data.frame(NULL),
  special_iteration_criteria = data.frame(absolute_conc_tol = 1,
                                          relative_conc_tol = 1,
                                          maximum_n_iteration = 1),
@@ -65,5 +65,5 @@ Function to set solute_transport while maintaining unused default model paramete
 }
 }
 \examples{
-hydrus_model$solute_options <- solute_options(number_solutes = 1)
+hydrus_model$solute_transport <- solute_transport(number_solutes = 1)
 }

@@ -16,5 +16,5 @@ edits BLOCK G of SELECTOR.IN
 Set Block G of SELECTOR.IN: Root Water Uptake Information
 }
 \examples{
-block_g_root_water_uptake_info(hydrus_model, root_water_uptake)
+block_g_root_water_uptake_info(hydrus_model)
 }

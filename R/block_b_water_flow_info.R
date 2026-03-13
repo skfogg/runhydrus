@@ -7,7 +7,7 @@
 #'
 #' @examples block_b_water_flow_info(hydrus_model)
 #'
-#' @import stringr
+#' @importFrom stringr str_flatten str_split str_count
 block_b_water_flow_info <- function(hydrus_model){
 
   selector_template <- readLines(file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))

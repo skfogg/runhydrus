@@ -23,3 +23,7 @@ list of parameters
 \description{
 Function to set model_units while maintaining unused default model parameters.
 }
+\examples{
+hydrus_model$model_units <- model_units(time_unit = "seconds",
+                                                  space_unit = "mm")
+}

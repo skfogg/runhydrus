@@ -2,20 +2,20 @@
 % Please edit documentation in R/edit_dat_file.R
 \name{edit_dat_file}
 \alias{edit_dat_file}
-\title{Title}
+\title{Edits the HYDRUS1D.DAT file}
 \usage{
 edit_dat_file(hydrus_model)
 }
 \arguments{
-\item{hydrus_project}{a hydrus project object created with
+\item{hydrus_model}{a hydrus project object created with
 'create_hydrus_project'}
 }
 \value{
 Edits the .DAT file of the HYRDUS project
 }
 \description{
-Title
+Edits the HYDRUS1D.DAT file
 }
 \examples{
-edit_dat_file(hydrus_project, main_processes = main_processes, model_units = model_units, geometry = geometry, print_options = print_options, water_flow_bcs = water_flow_bcs)
+edit_dat_file(hydrus_model)
 }

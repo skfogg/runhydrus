@@ -17,6 +17,12 @@ soil_profile_mesh(
 \arguments{
 \item{nodal_soil_properties}{}
 }
+\value{
+edits PROFILE.DAT file
+}
 \description{
 Set PROFILE.DAT file
+}
+\examples{
+soil_profile_mesh(hydrus_model)
 }

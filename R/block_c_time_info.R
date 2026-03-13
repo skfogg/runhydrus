@@ -5,7 +5,7 @@
 #' @returns edits BLOCK C of SELECTOR.IN
 #' @export
 #'
-#' @import stringr
+#' @importFrom stringr str_flatten
 #'
 #' @examples block_c_time_info(hydrus_model)
 block_c_time_info <- function(hydrus_model                              ){

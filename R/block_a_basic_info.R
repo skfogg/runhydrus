@@ -7,7 +7,7 @@
 #'
 #' @examples block_a_basic_info(hydrus_model)
 #'
-#' @import stringr
+#' @importFrom stringr str_split str_locate_all str_flatten
 block_a_basic_info <- function(hydrus_model){
 
   # Uses main_processes, model_units, print_options, time_variable_bc, solute_transport, root_water_uptake, water_flow_bcs, geometry
