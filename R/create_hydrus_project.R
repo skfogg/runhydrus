@@ -61,7 +61,7 @@ create_hydrus_project <- function(project_name,
   }
 
   #### Create HYDRUS1d.DAT file
-  file.create(file.path(project_path, "HYDRUS1D.DAT"))
+  writeLines(character(0), file.path(project_path, "HYDRUS1D.DAT"))
 
   ## Create empty SELECTOR.IN file in the project path
   file.create(file.path(project_path, "SELECTOR.IN"))
@@ -70,7 +70,7 @@ create_hydrus_project <- function(project_name,
   file.create(file.path(project_path, "PROFILE.DAT"))
 
   ## Create SolverLog.err in project path
-  file.create(file.path(project_path, "SolverLog.err"))
+  writeLines(character(0), file.path(project_path, "SolverLog.err"))
 
   ## Create directories:
   extra_directories <- list("Furrow", "Genex", "Genex_Tmp", "H_Compounds", "H_Grids",
