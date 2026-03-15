@@ -63,12 +63,6 @@ create_hydrus_project <- function(project_name,
   #### Create HYDRUS1d.DAT file
   writeLines(character(0), file.path(project_path, "HYDRUS1D.DAT"))
 
-  ## Create empty SELECTOR.IN file in the project path
-  file.create(file.path(project_path, "SELECTOR.IN"))
-
-  ## Create empty PROFILE.DAT file in the project path
-  file.create(file.path(project_path, "PROFILE.DAT"))
-
   ## Create SolverLog.err in project path
   writeLines(character(0), file.path(project_path, "SolverLog.err"))
 
