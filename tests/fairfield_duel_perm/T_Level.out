@@ -1,7 +1,7 @@
  ******* Program HYDRUS
  ******* 
  Replicate Fairfield duel perm model using runhydrus                     
- Date:   8. 3.2026    Time:  20:55:20
+ Date:  11. 3.2026    Time:  13:13:59
  Units: L = cm   , T = days , M = mmol 
 
        Time        rTopT      rRootT       vTopT      vRootT     vBotT    sum(rTopT)  sum(rRoot)  sum(vTopT)  sum(vRoot)  sum(vBotT)     hTop        hRoot       hBot        vTopF    sum(vTopF)     vTopM   sum(vTopM)     vFrac    sum(vFrac)     vBotF    sum(vBotF)      vBotM     sum(vBotM)  t-level    RunOff   sum(RunOff)  sum(Infil)   sum(Evap)

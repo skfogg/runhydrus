@@ -678,9 +678,9 @@ root_growth <- function(root_growth_depth = 0,
 #' \item{upper_bc}{options include: \code{"concentration_bc"}, \code{"solute_flux_bc"}, \code{"stagnant_bc_volotile_solute"}, \code{"isotope_bc"}}
 #' \item{lower_bc}{options include: \code{"concentration_bc"}, \code{"solute_flux_bc"}, \code{"zero_conc_gradient"}}
 #' \item{in_total_concentrations}{logical indicating if initial conditions should be in total concentrations, mass of solute/mass of soil (TRUE), instead of liquid phase concnetrations, mass of solute/volume water (default; FALSE)}
-#' \item{stagnant_boundary_layer} only used when \code{upper_bc = "stagnant_bc_volotile_solute"}
-#' \item{concentration_in_atmosphere} only used when \code{upper_bc = "stagnant_bc_volotile_solute"}
-#' \item{fractionation_ratio} only used when \code{upper_bc = "isotope_bc"}
+#' \item{stagnant_boundary_layer}{only used when \code{upper_bc = "stagnant_bc_volotile_solute"}}
+#' \item{concentration_in_atmosphere}{only used when \code{upper_bc = "stagnant_bc_volotile_solute"}}
+#' \item{fractionation_ratio}{only used when \code{upper_bc = "isotope_bc"}}
 #' }
 #'
 #' @examples hydrus_model$solute_transport <- solute_transport(number_solutes = 1)
@@ -740,7 +740,7 @@ solute_transport <- function(solute_transport_model = "equilibrium_model",
               material_params = material_params,
               solute_params = solute_params,
               solute_reaction_params = solute_reaction_params,
-              solute_transport_bcs ))
+              solute_transport_bcs = solute_transport_bcs))
 }
 
 #' Set particle tracking parameters in a HYDRUS model

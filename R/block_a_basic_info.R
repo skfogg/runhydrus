@@ -31,10 +31,10 @@ block_a_basic_info <- function(hydrus_model){
 
   ## Start with all model options turned off:
   basic_opt_1 <- data.frame(keyword = stringr::str_split(selector_template[grep("lWat", selector_template)], " {1,}", simplify = T)[1,],
-                            idx_loc = sort(unique(unlist(stringr::str_locate_all(selector_template[grep("lWat", selector_template)+1], c("t", "f"))))),
+                            idx_loc = sort(unique(unlist(stringr::str_locate_all(selector_template[grep("lWat", selector_template)+1], "t|f")))),
                             on = "f")
   basic_opt_2 <- data.frame(keyword = stringr::str_split(selector_template[grep("lSnow", selector_template)], " {1,}", simplify = T)[1,],
-                            idx_loc = sort(unique(unlist(stringr::str_locate_all(selector_template[grep("lSnow", selector_template)+1], c("t", "f"))))),
+                            idx_loc = sort(unique(unlist(stringr::str_locate_all(selector_template[grep("lSnow", selector_template)+1], "t|f")))),
                             on = "f")
 
   # Turn on options based on processes set in create_hydrus_project()

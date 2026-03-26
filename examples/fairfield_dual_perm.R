@@ -19,7 +19,8 @@ fairfield_dual_perm <-  create_hydrus_project(project_name = "fairfield_dual_per
 ## Main processes
 fairfield_dual_perm$main_processes <- main_processes(water_flow = T,
                                                      root_water_uptake = T,
-                                                     root_growth = T)
+                                                     root_growth = T,
+                                                     solute_transport = T)
 ## Geometry:
 fairfield_dual_perm$geometry <- geometry(number_materials = 3,
                                          profile_depth = 175,
@@ -50,7 +51,17 @@ fairfield_dual_perm$root_water_uptake <- root_water_uptake(root_water_uptake_mod
                                                                                                  h50 = -800,
                                                                                                  P3 = 3))
 ## Solute Options
-fairfield_dual_perm$solute_options <- solute_options(equilibrium_adsorption = TRUE)
+fairfield_dual_perm$solute_transport <- solute_transport(equilibrium_adsorption = TRUE,
+                                                         number_solutes = 1,
+                                                         material_params = data.frame(material = 1:3,
+                                                                                      bulk_density = 1.5,
+                                                                                      longitudinal_dispersivity = 0.3,
+                                                                                      fraction_adsorption_sites = 1,
+                                                                                      immobile_water_content = 0),
+                                                         solute_params = data.frame(molecular_diffusion_free_water = 1.74,
+                                                                                    molecular_diffusion_soil_air = 0))
+
+
 ## Soil Hydraulic Model
 fairfield_dual_perm$soil_hydraulics <- soil_hydraulics(soil_hydraulic_model = 8,
                                                        surface_flow_into_fracture = 0.15,

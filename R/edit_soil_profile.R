@@ -71,8 +71,17 @@ edit_soil_profile <- function(hydrus_model,
   profile_template <- readLines(system.file("templates", "PROFILE.DAT", package = "runhydrus"),
                                 n = -1L, encoding = "unknown")
 
+  profile_data <- readr::read_fwf(system.file("templates", "PROFILE.DAT", package = "runhydrus"),
+                  skip = 5,
+                  col_positions = fwf_positions(start = c(0,  6,  21, 36, 41,  47,  61,  76,  91, 106, 121),
+                                                end =   c(5, 20,  35, 40, 45,  60,  75,  90, 105, 120, NA),
+                                                col_names = c("node", "position", "head", "mat", "lay", "beta", "axz", "bxz", "dxz", "temp", "conc")),
+                  n_max = hydrus_model$geometry$number_nodes)
+
+
+
   profile_template[grep("Pcp", profile_template)+1] <- stringr::str_flatten(c(rep(" ", times = 4),
-                                                                   nrow(mesh_density)))
+                                                                              nrow(mesh_density)))
 
   ## Convert to Scientific notation with 6 trailing 0s
   mesh_density <- hydrus_sci_format(mesh_density)
@@ -83,8 +92,20 @@ edit_soil_profile <- function(hydrus_model,
 
   # write to profile_template to accommodate for variable number of rows:
   write(profile_template[1:(grep("Pcp", profile_template)+1)], profile_connection)
+
+
+  c(5,20,35,40,45,60,75,90,105,120, 135) -  c(0,  6,  21, 36, 41,  46,  61,  76,  91, 106, 121)
+
+
+  gdata::write.fwf(x = mesh_density,
+                   file = profile_connection,
+                   append = TRUE,
+                   justify = "right",
+                   width = c(5, 17, 17, 17),
+                   colnames = FALSE)
+
   for(i in 1:nrow(mesh_density)){
-    write(paste0(mesh_density[i,], collapse = "    "), profile_connection, append = TRUE)
+    write(paste0("    ", mesh_density[i,], collapse = "    "), profile_connection, append = TRUE)
   }
   write(profile_template[grep("Mat", profile_template):length(profile_template)], profile_connection, append = TRUE)
 
@@ -105,7 +126,7 @@ edit_soil_profile <- function(hydrus_model,
 
   write(profile_template[1:grep("Mat", profile_template)], profile_connection)
   for(i in 1:nrow(nodal_soil_properties)){
-    write(paste0(nodal_soil_properties[i,], collapse = "    "), profile_connection, append = TRUE)
+    write(paste0("    ",nodal_soil_properties[i,], collapse = "    "), profile_connection, append = TRUE)
   }
   write(as.character(hydrus_model$geometry$observation_nodes_n), profile_connection, append = TRUE)
   if(hydrus_model$geometry$observation_nodes_n > 0){
