@@ -19,8 +19,7 @@ fairfield_dual_perm <-  create_hydrus_project(project_name = "fairfield_dual_per
 ## Main processes
 fairfield_dual_perm$main_processes <- main_processes(water_flow = T,
                                                      root_water_uptake = T,
-                                                     root_growth = T,
-                                                     solute_transport = T)
+                                                     root_growth = T)
 ## Geometry:
 fairfield_dual_perm$geometry <- geometry(number_materials = 3,
                                          profile_depth = 175,
@@ -36,30 +35,20 @@ fairfield_dual_perm$root_growth <- root_growth(root_growth_factor = 1,
                                                                                "maximum_rooting_depth" = 60,
                                                                                "time_period" = 365))
 ## Time Variable Boundary Conditions
-fairfield_dual_perm$time_variable_bc <- time_variable_bc(time_variable_bc = T,
-                                                         meteorological_data = T)
+fairfield_dual_perm$time_variable_bc <- time_variable_bc(time_variable_bc = T)
 ## Water Flow Boundary Conditions
 fairfield_dual_perm$water_flow_bcs <- water_flow_bcs(upper_bc = "atm_bc_with_surface_runoff")
 ## Print Options
-fairfield_dual_perm$print_options <- print_options(times_to_print = data.frame(times = 861),
-                                                   interval_output = 1)
+fairfield_dual_perm$print_options <- print_options(times_to_print = data.frame(times = 1334:1698))
 ## Time Parameters
-fairfield_dual_perm$time_parameters <- time_parameters(final_model_time = 861)
+fairfield_dual_perm$time_parameters <- time_parameters(final_model_time = 1698)
 ## Root Water Uptake
 fairfield_dual_perm$root_water_uptake <- root_water_uptake(root_water_uptake_model = 1,
                                                            root_water_uptake_params = data.frame(critical_stress_index = 1,
                                                                                                  h50 = -800,
                                                                                                  P3 = 3))
-## Solute Options
-fairfield_dual_perm$solute_transport <- solute_transport(equilibrium_adsorption = TRUE,
-                                                         number_solutes = 1,
-                                                         material_params = data.frame(material = 1:3,
-                                                                                      bulk_density = 1.5,
-                                                                                      longitudinal_dispersivity = 0.3,
-                                                                                      fraction_adsorption_sites = 1,
-                                                                                      immobile_water_content = 0),
-                                                         solute_params = data.frame(molecular_diffusion_free_water = 1.74,
-                                                                                    molecular_diffusion_soil_air = 0))
+## Equilibrium adsorption (no solute transport)
+fairfield_dual_perm$solute_transport <- solute_transport(equilibrium_adsorption = TRUE)
 
 
 ## Soil Hydraulic Model
@@ -88,7 +77,7 @@ parameterize_hydrus_model(fairfield_dual_perm)
 
 ## Alter necessary input files:
 ## Time-Variable Atmospheric Inputs:
-meghans_atmosph <- read_csv("./examples/meghan_atmosph.csv")
+meghans_atmosph <- read_csv("./examples/meghan_atmosph_full_data.csv")
 edit_atmosph_file(fairfield_dual_perm,
                   atm_time_series = data.frame(time = meghans_atmosph$tAtm,
                                                precip = meghans_atmosph$Prec,
@@ -97,19 +86,19 @@ edit_atmosph_file(fairfield_dual_perm,
                   max_h_at_surface = 0)
 
 ## Soil Profile Mesh:
+## mat: nodes 1-6 = material 1 (0 to -8.75 cm), nodes 7-87 = material 2,
+##      nodes 88-101 = material 3 (-152.25 to -175 cm)
 edit_soil_profile(fairfield_dual_perm,
                   mesh_density = data.frame(fixed_points = c(0, -175),
                                             upper_relative_size_fe = 1.0,
                                             lower_relative_size_fe = 1.0),
-                  nodal_soil_properties = list(h = -175,
+                  nodal_soil_properties = list(h = -150,
                                                root = 0,
                                                a_xz = 1,
                                                b_xz = 1,
                                                d_xz = 1,
-                                               mat = 1,
-                                               lay = 1,
-                                               temp = 20,
-                                               conc = 0))
+                                               mat = c(rep(1, 6), rep(2, 81), rep(3, 14)),
+                                               lay = 1))
 
 
 ## Run HYDRUS:

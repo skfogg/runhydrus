@@ -65,7 +65,7 @@ block_a_basic_info <- function(hydrus_model){
     basic_opt_1[basic_opt_1$keyword == "lVariabBC","on"] <- "t"
   }
   if(hydrus_model$solute_transport$solute_transport_model == "equilibrium_model"){
-    basic_opt_1[basic_opt_1$keyword == "lEquilib","on"] <- "t"
+    basic_opt_1[basic_opt_1$keyword == "lEquil","on"] <- "t"
   }
   if(hydrus_model$main_processes$inverse){
     basic_opt_1[basic_opt_1$keyword == "lInverse", "on"] <- "t"

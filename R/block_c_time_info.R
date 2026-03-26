@@ -48,9 +48,9 @@ block_c_time_info <- function(hydrus_model                              ){
                                                                              ifelse(hydrus_model$print_options$print_times, "t", "f")))
 
   # TPrint(1),TPrint(2),...,TPrint(MPL)
-  selector_template[grep("TPrint", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 9),
-                                                                          paste0(as.character(hydrus_model$print_options$times_to_print$times)),
-                                                                          collapse = "         "))
+  selector_template[grep("TPrint", selector_template) + 1] <- stringr::str_flatten(
+    formatC(hydrus_model$print_options$times_to_print$times, width = 12),
+    collapse = "")
 
   ## Update SELECTOR.IN
   writeLines(selector_template, file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))

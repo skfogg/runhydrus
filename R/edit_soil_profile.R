@@ -2,28 +2,26 @@
 #'
 #' @usage edit_soil_profile(
 #'  hydrus_model,
-#'  mesh_density = data.frame(fixed_points = c(0, -101),
+#'  mesh_density = data.frame(fixed_points = c(0, -100),
 #'                            upper_relative_size_fe = 1.0,
 #'                            lower_relative_size_fe = 1.0),
 #'  set_mesh_nodes_manually = FALSE,
 #'  mesh_nodes_manual = data.frame(number = 1:101,
 #'                                 z = -0:-100),
-#'  nodal_soil_properties = list(h = -101,
+#'  nodal_soil_properties = list(h = -100,
 #'                               root = 0,
 #'                               a_xz = 1,
 #'                               b_xz = 1,
 #'                               d_xz = 1,
 #'                               mat = 1,
-#'                               lay = 1,
-#'                               temp = 20,
-#'                               conc = 0)
+#'                               lay = 1)
 #' )
 #'
 #' @param hydrus_model a hydrus model created with \code{\link{create_hydrus_project}}
 #' @param mesh_density data.frame of parameters needed for the mesh density calculation. See details.
 #' @param set_mesh_nodes_manually logical. If FALSE, will use the parameters in the \code{mesh_density} data.frame. If TRUE, you set your own mesh node locations in the \code{mesh_nodes_manual} data.frame.
 #' @param mesh_nodes_manual data.frame of mesh number and locations when setting mesh nodes manually.
-#' @param nodal_soil_properties data.frame of nodal soil properties
+#' @param nodal_soil_properties list of nodal soil properties. Scalar values are recycled to all nodes; vectors must have length equal to the number of nodes.
 #'
 #' @returns edits PROFILE.DAT file
 #' @export
@@ -31,110 +29,113 @@
 #' @details
 #' \describe{
 #'  \item{\code{mesh_density}}{Column names of data.frame must be \code{"fixed_points"}, \code{"upper_relative_size_fe"}, and \code{"lower_relative_size_fe"}. Finite element (FE) sizes are proportionally distributed according to \code{"upper_relative_size_fe"} and \code{"lower_relative_size_fe"} between the fixed points provided.}
-#'  \item{\code{mesh_nodes_manual}}{Column names of data.frame must be \code{"number"} and \code{"z"}. Number is the nodes ID number and z is the coordinate depth.}
-#'  \item{\code{nodal_soil_properties}}{Column names of data.frame must be \code{"h"} (initial pressure head or water content), \code{"root"} (depth distribution of root water uptake, equal to 0 is node lies outside of root zone), \code{"a_xz"} (nodal value of dimensionless scaling factor associated with pressure head), \code{"b_xz"} (nodal value of dimensionless scaling factor associated with saturated hydraulic conductivity), \code{"d_xz"} (nodal value of dimensionless scaling factor associated with water content), \code{"mat"} (material), \code{"lay"} (subregion), \code{"temp"} (iniital nodal temperature), and \code{"conc"} (initial nodal concentration).
-#'  }
+#'  \item{\code{mesh_nodes_manual}}{Column names of data.frame must be \code{"number"} and \code{"z"}. Number is the node ID number and z is the coordinate depth (negative, in cm).}
+#'  \item{\code{nodal_soil_properties}}{Named list with elements \code{"h"} (initial pressure head), \code{"root"} (root water uptake distribution; 0 outside root zone), \code{"a_xz"} (scaling factor for pressure head), \code{"b_xz"} (scaling factor for saturated hydraulic conductivity), \code{"d_xz"} (scaling factor for water content), \code{"mat"} (material number; scalar or per-node vector), \code{"lay"} (subregion). Optionally include \code{"temp"} (initial nodal temperature) when heat transport is enabled.}
 #' }
 #'
 #'
 #' @examples edit_soil_profile(hydrus_model)
 edit_soil_profile <- function(hydrus_model,
-                              mesh_density = data.frame(fixed_points = c(0, -101),
+                              mesh_density = data.frame(fixed_points = c(0, -100),
                                                         upper_relative_size_fe = 1.0,
                                                         lower_relative_size_fe = 1.0),
                               set_mesh_nodes_manually = FALSE,
                               mesh_nodes_manual = data.frame(number = 1:101,
-                                                                   z = -0:-100),
-                              nodal_soil_properties = list(h = -101,
-                                                                 root = 0,
-                                                                 a_xz = 1,
-                                                                 b_xz = 1,
-                                                                 d_xz = 1,
-                                                                 mat = 1,
-                                                                 lay = 1,
-                                                                 temp = 20,
-                                                                 conc = 0)){
+                                                             z = -0:-100),
+                              nodal_soil_properties = list(h = -100,
+                                                           root = 0,
+                                                           a_xz = 1,
+                                                           b_xz = 1,
+                                                           d_xz = 1,
+                                                           mat = 1,
+                                                           lay = 1)){
 
-  ## default node spacing
-  default_node_spacing <- hydrus_model$geometry$profile_depth/(hydrus_model$geometry$number_nodes-1)
+  n_nodes <- hydrus_model$geometry$number_nodes
 
+  ## Generate mesh nodes
   if(set_mesh_nodes_manually){
     mesh_nodes <- mesh_nodes_manual
-  }else{
-    mesh_nodes <- data.frame(number = 1:hydrus_model$geometry$number_nodes,
-                             z = seq(0, hydrus_model$geometry$profile_depth, by = default_node_spacing))
+  } else {
+    default_spacing <- hydrus_model$geometry$profile_depth / (n_nodes - 1)
+    mesh_nodes <- data.frame(number = 1:n_nodes,
+                             z = seq(0, -hydrus_model$geometry$profile_depth,
+                                     by = -default_spacing))
   }
 
-
-  ## Get PROFILE.DAT file of project
-  profile_connection <- file.path(paste0(hydrus_model$hydrus_project$project_path, "/PROFILE.DAT"))
-  profile_template <- readLines(system.file("templates", "PROFILE.DAT", package = "runhydrus"),
-                                n = -1L, encoding = "unknown")
-
-  profile_data <- readr::read_fwf(system.file("templates", "PROFILE.DAT", package = "runhydrus"),
-                  skip = 5,
-                  col_positions = fwf_positions(start = c(0,  6,  21, 36, 41,  47,  61,  76,  91, 106, 121),
-                                                end =   c(5, 20,  35, 40, 45,  60,  75,  90, 105, 120, NA),
-                                                col_names = c("node", "position", "head", "mat", "lay", "beta", "axz", "bxz", "dxz", "temp", "conc")),
-                  n_max = hydrus_model$geometry$number_nodes)
-
-
-
-  profile_template[grep("Pcp", profile_template)+1] <- stringr::str_flatten(c(rep(" ", times = 4),
-                                                                              nrow(mesh_density)))
-
-  ## Convert to Scientific notation with 6 trailing 0s
-  mesh_density <- hydrus_sci_format(mesh_density)
-
-  # Add row.name column to mesh_density
-  mesh_density <- cbind(data.frame(no = row.names(mesh_density)),
-                        mesh_density)
-
-  # write to profile_template to accommodate for variable number of rows:
-  write(profile_template[1:(grep("Pcp", profile_template)+1)], profile_connection)
-
-
-  c(5,20,35,40,45,60,75,90,105,120, 135) -  c(0,  6,  21, 36, 41,  46,  61,  76,  91, 106, 121)
-
-
-  gdata::write.fwf(x = mesh_density,
-                   file = profile_connection,
-                   append = TRUE,
-                   justify = "right",
-                   width = c(5, 17, 17, 17),
-                   colnames = FALSE)
-
-  for(i in 1:nrow(mesh_density)){
-    write(paste0("    ", mesh_density[i,], collapse = "    "), profile_connection, append = TRUE)
+  ## Build full nodal data frame; recycle scalar properties to all nodes
+  nodal_df <- data.frame(number = mesh_nodes$number, z = mesh_nodes$z)
+  for(nm in names(nodal_soil_properties)){
+    val <- nodal_soil_properties[[nm]]
+    nodal_df[[nm]] <- if(length(val) == 1L) rep(val, n_nodes) else val
   }
-  write(profile_template[grep("Mat", profile_template):length(profile_template)], profile_connection, append = TRUE)
 
-  ## update profile_template
-  profile_template <- readLines(profile_connection)
+  ## Determine HYDRUS PROFILE.DAT flags:
+  ## lHeat = 1 if heat transport is active (writes Temp column per node)
+  ## lChem = 0  (initial concentrations not written per-node to PROFILE.DAT)
+  ## KodCB = 1  (boundary condition code)
+  lHeat <- as.integer(isTRUE(hydrus_model$main_processes$heat_transport))
+  lChem <- 0L
+  KodCB <- 1L
 
-  ## nodal flow properties
-  ## Convert some columns to scientific notation with 6 trailing 0s
-  nodal_soil_properties <- cbind(mesh_nodes, nodal_soil_properties)
+  ## Output file path
+  profile_path <- file.path(hydrus_model$hydrus_project$project_path, "PROFILE.DAT")
 
-  nodal_soil_properties <- as.data.frame(lapply(nodal_soil_properties, as.numeric))
-  nodal_sci <- hydrus_sci_format(nodal_soil_properties[,c("z", "h", "root", "a_xz", "b_xz", "d_xz", "temp", "conc")])
+  ## --- Build output lines ---
+  out <- character(0)
 
-  nodal_soil_properties <- cbind(nodal_soil_properties$number,
-                                 nodal_sci[, c("z","h")],
-                                 nodal_soil_properties[, c("mat", "lay")],
-                                 nodal_sci[, c("root","a_xz", "b_xz", "d_xz", "temp", "conc")])
+  ## Line 1: version
+  out <- c(out, "Pcp_File_Version=5")
 
-  write(profile_template[1:grep("Mat", profile_template)], profile_connection)
-  for(i in 1:nrow(nodal_soil_properties)){
-    write(paste0("    ",nodal_soil_properties[i,], collapse = "    "), profile_connection, append = TRUE)
+  ## Line 2: number of fixed points in mesh density
+  out <- c(out, sprintf("%5d", nrow(mesh_density)))
+
+  ## Mesh density rows
+  md_sci <- hydrus_sci_format(mesh_density)
+  for(i in seq_len(nrow(mesh_density))){
+    out <- c(out, paste0(
+      sprintf("%5d", i),
+      formatC(md_sci$fixed_points[i],              width = 15),
+      formatC(md_sci$upper_relative_size_fe[i],    width = 15),
+      formatC(md_sci$lower_relative_size_fe[i],    width = 15)
+    ))
   }
-  write(as.character(hydrus_model$geometry$observation_nodes_n), profile_connection, append = TRUE)
-  if(hydrus_model$geometry$observation_nodes_n > 0){
-    # obs_subset <- subset(nodal_soil_properties, z %in% hydrus_model$geometry$observation_nodes)
-    # write(paste0(obs_subset$number, collapse = "   "), profile_connection, append = TRUE)
-    #
-    write(paste0(hydrus_model$geometry$observation_nodes, collapse = "   "), profile_connection, append = TRUE)
+
+  ## Node count / flag header line
+  col_labels <- " x         h      Mat  Lay      Beta           Axz            Bxz            Dxz          Temp          Conc "
+  out <- c(out, paste0(
+    sprintf("%5d%5d%5d%5d", n_nodes, lChem, lHeat, KodCB),
+    col_labels
+  ))
+
+  ## Nodal data rows
+  sci_cols <- c("z", "h", "root", "a_xz", "b_xz", "d_xz")
+  if(lHeat == 1L) sci_cols <- c(sci_cols, "temp")
+  nodal_sci <- hydrus_sci_format(nodal_df[, sci_cols, drop = FALSE])
+
+  for(i in seq_len(n_nodes)){
+    row <- paste0(
+      sprintf("%5d",          nodal_df$number[i]),
+      formatC(nodal_sci$z[i],     width = 15),
+      formatC(nodal_sci$h[i],     width = 15),
+      sprintf("%5d%5d",       nodal_df$mat[i], nodal_df$lay[i]),
+      formatC(nodal_sci$root[i],  width = 15),
+      formatC(nodal_sci$a_xz[i],  width = 15),
+      formatC(nodal_sci$b_xz[i],  width = 15),
+      formatC(nodal_sci$d_xz[i],  width = 15)
+    )
+    if(lHeat == 1L) row <- paste0(row, formatC(nodal_sci$temp[i], width = 15))
+    out <- c(out, row)
   }
+
+  ## Observation nodes
+  obs_n <- hydrus_model$geometry$observation_nodes_n
+  out <- c(out, sprintf("%5d", obs_n))
+  if(obs_n > 0){
+    out <- c(out, paste(sprintf("%5d", hydrus_model$geometry$observation_nodes), collapse = ""))
+  }
+
+  ## Write to file
+  writeLines(out, profile_path)
 
   cat("Updated PROFILE.DAT file... \n")
 
