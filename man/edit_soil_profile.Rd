@@ -6,21 +6,19 @@
 \usage{
 edit_soil_profile(
  hydrus_model,
- mesh_density = data.frame(fixed_points = c(0, -101),
+ mesh_density = data.frame(fixed_points = c(0, -100),
                            upper_relative_size_fe = 1.0,
                            lower_relative_size_fe = 1.0),
  set_mesh_nodes_manually = FALSE,
  mesh_nodes_manual = data.frame(number = 1:101,
                                 z = -0:-100),
- nodal_soil_properties = list(h = -101,
+ nodal_soil_properties = list(h = -100,
                               root = 0,
                               a_xz = 1,
                               b_xz = 1,
                               d_xz = 1,
                               mat = 1,
-                              lay = 1,
-                              temp = 20,
-                              conc = 0)
+                              lay = 1)
 )
 }
 \arguments{
@@ -32,7 +30,7 @@ edit_soil_profile(
 
 \item{mesh_nodes_manual}{data.frame of mesh number and locations when setting mesh nodes manually.}
 
-\item{nodal_soil_properties}{data.frame of nodal soil properties}
+\item{nodal_soil_properties}{list of nodal soil properties. Scalar values are recycled to all nodes; vectors must have length equal to the number of nodes.}
 }
 \value{
 edits PROFILE.DAT file
@@ -43,9 +41,8 @@ Set PROFILE.DAT file
 \details{
 \describe{
  \item{\code{mesh_density}}{Column names of data.frame must be \code{"fixed_points"}, \code{"upper_relative_size_fe"}, and \code{"lower_relative_size_fe"}. Finite element (FE) sizes are proportionally distributed according to \code{"upper_relative_size_fe"} and \code{"lower_relative_size_fe"} between the fixed points provided.}
- \item{\code{mesh_nodes_manual}}{Column names of data.frame must be \code{"number"} and \code{"z"}. Number is the nodes ID number and z is the coordinate depth.}
- \item{\code{nodal_soil_properties}}{Column names of data.frame must be \code{"h"} (initial pressure head or water content), \code{"root"} (depth distribution of root water uptake, equal to 0 is node lies outside of root zone), \code{"a_xz"} (nodal value of dimensionless scaling factor associated with pressure head), \code{"b_xz"} (nodal value of dimensionless scaling factor associated with saturated hydraulic conductivity), \code{"d_xz"} (nodal value of dimensionless scaling factor associated with water content), \code{"mat"} (material), \code{"lay"} (subregion), \code{"temp"} (iniital nodal temperature), and \code{"conc"} (initial nodal concentration).
- }
+ \item{\code{mesh_nodes_manual}}{Column names of data.frame must be \code{"number"} and \code{"z"}. Number is the node ID number and z is the coordinate depth (negative, in cm).}
+ \item{\code{nodal_soil_properties}}{Named list with elements \code{"h"} (initial pressure head), \code{"root"} (root water uptake distribution; 0 outside root zone), \code{"a_xz"} (scaling factor for pressure head), \code{"b_xz"} (scaling factor for saturated hydraulic conductivity), \code{"d_xz"} (scaling factor for water content), \code{"mat"} (material number; scalar or per-node vector), \code{"lay"} (subregion). Optionally include \code{"temp"} (initial nodal temperature) when heat transport is enabled.}
 }
 }
 \examples{
