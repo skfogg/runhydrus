@@ -76,27 +76,24 @@ edit_atmosph_file <- function(hydrus_model,
 
   ## Get a basic ATMOSPH.IN template
   atmosph_template <- readLines(base::system.file("templates", "ATMOSPH.IN", package = "runhydrus"), n = -1L, encoding = "unknown")
-  ## write to project_path
-  write(atmosph_template, file = file.path(hydrus_model$hydrus_project$project_path, "ATMOSPH.IN"))
 
   ## update the number of atmospheric observations (based on the number of rows in the given data.frame)
-  atmosph_template[grep("MaxAL", atmosph_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 6),
-                                                                       nrow(atm_time_series)))
+  atmosph_template[grep("MaxAL", atmosph_template) + 1] <- sprintf("%7d", nrow(atm_time_series))
 
   time_var_bc_options <- stringr::str_split(atmosph_template[grep("DailyVar", atmosph_template) + 1], "", simplify = T)
 
   if(hydrus_model$time_variable_bc$daily_var_transpiration){
     time_var_bc_options[,8] <- "t"
-    atmosph_template[grep("DailyVar", atmosph_template) + 1] <- stringr::str_flatten(time_var_bc_options)
   }
   if(hydrus_model$time_variable_bc$sinusoidal_var_precipitation){
     time_var_bc_options[,16] <- "t"
-    atmosph_template[grep("DailyVar", atmosph_template) + 1] <- stringr::str_flatten(time_var_bc_options)
   }
   if(hydrus_model$time_variable_bc$repeat_bc_records){
     time_var_bc_options[,32] <- "t"
-    atmosph_template[grep("DailyVar", atmosph_template) + 1] <- stringr::str_flatten(time_var_bc_options)
+  }
+  atmosph_template[grep("DailyVar", atmosph_template) + 1] <- stringr::str_flatten(time_var_bc_options)
 
+  if(hydrus_model$time_variable_bc$repeat_bc_records){
     ## add in Cycles lines
     atmosph_template <- c(atmosph_template[1:grep("DailyVar", atmosph_template) + 1],
                           " Number of Cycles",
@@ -106,71 +103,94 @@ edit_atmosph_file <- function(hydrus_model,
   }
 
   if(hydrus_model$water_flow_bcs$upper_bc == "atm_bc_with_surface_layer"){
-    atmosph_template[grep("hCritS", atmosph_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 6),
-                                                                            max_h_at_surface))
+    atmosph_template[grep("hCritS", atmosph_template) + 1] <- sprintf("%7d", max_h_at_surface)
   }
 
   if(hydrus_model$water_flow_bcs$upper_bc %in% c("atm_bc_with_surface_layer", "atm_bc_with_surface_runoff")){
-    fill_in_df <- data.frame(tAtm = atm_time_series$time,
-                             Prec = atm_time_series$precip,
+    fill_in_df <- data.frame(tAtm  = atm_time_series$time,
+                             Prec  = atm_time_series$precip,
                              rSoil = atm_time_series$evap,
                              rRoot = 0,
                              hCritA = atm_time_series$min_pressure_head,
+                             rB = 0, hB = 0, ht = 0)
+  }
+  if(hydrus_model$water_flow_bcs$upper_bc == "variable_pressure_head"){
+    fill_in_df <- data.frame(tAtm  = atm_time_series$time,
+                             Prec  = 0,
+                             rSoil = 0,
+                             rRoot = 0,
+                             hCritA = 0,
                              rB = 0, hB = 0,
-                             ht = 0, RootDepth = 0)
-  }
-  if(hydrus_model$water_flow_bcs$upper_bc == "variable_pressure_head"){
-    fill_in_df <- data.frame(tAtm = atm_time_series$time,
-                             Prec = 0,
-                             rSoil = 0,
-                             rRoot = 0,
-                             hCritA = 0,
-                             rB = 0,
-                             hB = 0,
-                             ht = atm_time_series$pressure_head,
-                             RootDepth = 0)
-  }
-  if(hydrus_model$water_flow_bcs$upper_bc == "variable_pressure_head"){
-    fill_in_df <- data.frame(tAtm = atm_time_series$time,
-                             Prec = 0,
-                             rSoil = 0,
-                             rRoot = 0,
-                             hCritA = 0,
-                             rB = 0,
-                             hB = 0,
-                             ht = atm_time_series$pressure_head,
-                             RootDepth = 0)
+                             ht = atm_time_series$pressure_head)
   }
   if(hydrus_model$water_flow_bcs$upper_bc == "variable_pressure_head/flux"){
-    fill_in_df <- data.frame(tAtm = atm_time_series$time,
-                             Prec = atm_time_series$flux_top,
+    fill_in_df <- data.frame(tAtm  = atm_time_series$time,
+                             Prec  = atm_time_series$flux_top,
                              rSoil = atm_time_series$flux_or_head,
                              rRoot = 0,
                              hCritA = atm_time_series$min_pressure_head,
-                             rB = 0,
-                             hB = 0,
-                             ht = atm_time_series$pressure_head,
-                             RootDepth = 0)
+                             rB = 0, hB = 0,
+                             ht = atm_time_series$pressure_head)
   }
 
-  end_line <- atmosph_template[length(atmosph_template)]
+  ## Determine whether solute concentration columns are needed
+  lChem     <- isTRUE(hydrus_model$main_processes$solute_transport)
+  n_solutes <- if(lChem) as.integer(hydrus_model$solute_transport$number_solutes) else 0L
 
+  ## Take header lines up to but NOT including the "tAtm" column header line,
+  ## then append the appropriate column header for this run
+  header_idx <- grep("tAtm", atmosph_template)
+  out <- atmosph_template[1:(header_idx - 1)]
 
-  ## Assign soil hydraulic property parameters ####
-  ## NOTE: this creates three spaces between each number, where the original spacing is mode variable--I'm not sure if it will matter
-  for(i in 1:nrow(atm_time_series)){
-    atmosph_template[grep("tAtm", atmosph_template)+i] <- paste(rep(" ", times = 7),
-                                                                 as.character(unlist(fill_in_df[i,])),
-                                                                 collapse = stringr::str_flatten(rep(" ", times =  10)))
+  if(lChem){
+    ## Build cTop/cBot pairs for each solute (no number suffix when n_solutes == 1)
+    solute_hdrs <- paste(rep(c("        cTop", "        cBot"), n_solutes), collapse = "")
+    out <- c(out, paste0(
+      "       tAtm        Prec       rSoil       rRoot      hCritA",
+      "          rB          hB          ht",
+      "        tTop        tBot        Ampl",
+      solute_hdrs,
+      "   RootDepth"
+    ))
+  } else {
+    out <- c(out, atmosph_template[header_idx])
   }
 
-  atmosph_template[grep("tAtm", atmosph_template)+nrow(atm_time_series)+1] <- end_line
+  ## Write data rows: tAtm is 11 chars wide, all other columns are 12 chars wide;
+  ## RootDepth column is in the header but no value is written per row (trailing space only).
+  ## When solute transport is on, tTop/tBot/Ampl (all 0) and cTop/cBot per solute are appended.
+  ## cTop/cBot values are taken from fill_in_df if present, otherwise default to 0.
+  for(i in seq_len(nrow(fill_in_df))){
+    row <- paste0(
+      formatC(fill_in_df$tAtm[i],   width = 11),
+      formatC(fill_in_df$Prec[i],   width = 12),
+      formatC(fill_in_df$rSoil[i],  width = 12),
+      formatC(fill_in_df$rRoot[i],  width = 12),
+      formatC(fill_in_df$hCritA[i], width = 12, format = "fg"),
+      formatC(fill_in_df$rB[i],     width = 12),
+      formatC(fill_in_df$hB[i],     width = 12),
+      formatC(fill_in_df$ht[i],     width = 12)
+    )
+    if(lChem){
+      row <- paste0(row,
+                    formatC(0, width = 12),   # tTop
+                    formatC(0, width = 12),   # tBot
+                    formatC(0, width = 12))   # Ampl
+      for(s in seq_len(n_solutes)){
+        cTop_nm  <- if(n_solutes == 1L) "cTop" else paste0("cTop", s)
+        cBot_nm  <- if(n_solutes == 1L) "cBot" else paste0("cBot", s)
+        cTop_val <- if(!is.null(fill_in_df[[cTop_nm]])) fill_in_df[[cTop_nm]][i] else 0
+        cBot_val <- if(!is.null(fill_in_df[[cBot_nm]])) fill_in_df[[cBot_nm]][i] else 0
+        row <- paste0(row, formatC(cTop_val, width = 12), formatC(cBot_val, width = 12))
+      }
+    }
+    out <- c(out, paste0(row, " "))
+  }
 
-  ## cut template to just the first end of file line (remove everything else)
-  atmosph_template <- atmosph_template[1:grep("end", atmosph_template)[1]]
+  out <- c(out, "end*** END OF INPUT FILE 'ATMOSPH.IN' **********************************")
 
-  ## Update ATMOISPH.IN
-  writeLines(atmosph_template, file.path(hydrus_model$hydrus_project$project_path, "ATMOSPH.IN"))
+  ## Update ATMOSPH.IN
+  writeLines(out, file.path(hydrus_model$hydrus_project$project_path, "ATMOSPH.IN"))
   cat("Updated ATMOSPH.IN file... \n")
 
 

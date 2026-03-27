@@ -1,7 +1,7 @@
  ******* Program HYDRUS
  ******* 
- Welcome to HYDRUS-1D                                                    
- Date:  26. 3.2026    Time:  10:50:12
+ Replicate Fairfield dual perm model using runhydrus                     
+ Date:  27. 3.2026    Time:   8:45:57
  Units: L = cm   , T = days , M = mmol 
  
  CosAlf,MaxIt,TolTh,  TolH

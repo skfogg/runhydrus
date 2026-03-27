@@ -77,7 +77,7 @@ parameterize_hydrus_model(fairfield_dual_perm)
 
 ## Alter necessary input files:
 ## Time-Variable Atmospheric Inputs:
-meghans_atmosph <- read_csv("./examples/meghan_atmosph_full_data.csv")
+meghans_atmosph <- readr::read_csv("./examples/meghan_atmosph_full_data.csv")
 edit_atmosph_file(fairfield_dual_perm,
                   atm_time_series = data.frame(time = meghans_atmosph$tAtm,
                                                precip = meghans_atmosph$Prec,
