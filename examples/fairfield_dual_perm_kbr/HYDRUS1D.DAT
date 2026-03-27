@@ -21,4 +21,3 @@ InitialCondition=0
 [Profile]
 NumberOfNodes=101
 ProfileDepth=1.75E+02
-ObservationNodes=10

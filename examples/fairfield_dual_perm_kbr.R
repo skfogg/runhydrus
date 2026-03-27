@@ -16,6 +16,8 @@ fairfield_dual_perm_kbr <-  create_hydrus_project(project_name = "fairfield_dual
                                               parent_dir = "C:/Users/skati/Documents/runhydrus/examples",
                                               description = "Replicate Fairfield dual perm model using runhydrus, add artificial KBr solute")
 ## Parameterize model:
+## Model Units
+fairfield_dual_perm_kbr$model_units <- model_units(mass_unit = "mmol")
 ## Main processes
 fairfield_dual_perm_kbr$main_processes <- main_processes(water_flow = T,
                                                          root_water_uptake = T,
@@ -51,14 +53,19 @@ fairfield_dual_perm_kbr$root_water_uptake <- root_water_uptake(root_water_uptake
 ## Solute Transport
 fairfield_dual_perm_kbr$solute_transport <- solute_transport(equilibrium_adsorption = FALSE,
                                                              number_solutes = 1,
+                                                             stability_criterion = 2,
+                                                             pulse_duration = 1698,
+                                                             nonlinear_adsorption_iteration_criteria = data.frame(absolute_conc_tol = 0,
+                                                                                                                  relative_conc_tol = 0,
+                                                                                                                  maximum_n_iteration = 1),
                                                              material_params = data.frame(bulk_density = 1.5,
-                                                                                          longitudinal_dispersivity = 0.3,
-                                                                                          fraction_absorption_sites = 1,
+                                                                                          longitudinal_dispersivity = 17.5,
+                                                                                          fraction_adsorption_sites = 1,
                                                                                           immobile_water_content = 0),
                                                              solute_params = data.frame(molecular_diffusion_free_water = 1.74,
                                                                                         molecular_diffusion_soil_air = 0),
                                                              solute_transport_bcs = data.frame(upper_bc = "concentration_bc",
-                                                                                               lower_bc = "zero_conc_bc",
+                                                                                               lower_bc = "zero_conc_gradient",
                                                                                                in_total_concentrations = FALSE,
                                                                                                stagnant_boundary_layer = NA,
                                                                                                concentration_in_atmosphere = NA,
