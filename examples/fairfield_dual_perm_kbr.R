@@ -99,7 +99,9 @@ edit_atmosph_file(fairfield_dual_perm_kbr,
                   atm_time_series = data.frame(time = meghans_atmosph$tAtm,
                                                precip = meghans_atmosph$Prec,
                                                evap = meghans_atmosph$rSoil,
-                                               min_pressure_head = meghans_atmosph$hCritA),
+                                               min_pressure_head = meghans_atmosph$hCritA,
+                                               top_conc = kbr_bc_top,
+                                               bot_conc = 0),
                   max_h_at_surface = 0)
 
 

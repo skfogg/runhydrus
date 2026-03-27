@@ -48,17 +48,17 @@ edit_atmosph_file <- function(hydrus_model,
            then atmospheric time series must have columns 'time', 'precip', 'evap', and 'min_pressure_head'.")
     }
     if(max_h_at_surface != 0){
-      warning("Warning: max haight at soil surface option was changed from the default 0. This option is only used when the upper water
+      warning("Warning: max height at soil surface option was changed from the default 0. This option is only used when the upper water
               flow bc is set to 'atm_bc_with_surface_layer'.")
     }
   }
 
-  if(hydrus_model$water_flow_bcs$upper_bc == "atm_bc_with_surface_runoff"){
-    if(!all(colnames(atm_time_series) %in% c("time", "evap", "precip", "min_pressure_head"))){
-      stop("Error in atm_time_series. When upper boundary condition of water flow is set to 'atm_bc_with_surface_runoff',
-           then atmospheric time series must have columns 'time', 'precip', 'evap', and 'min_pressure_head'.")
-    }
-  }
+  # if(hydrus_model$water_flow_bcs$upper_bc == "atm_bc_with_surface_runoff"){
+  #   if(!all(colnames(atm_time_series) %in% c("time", "evap", "precip", "min_pressure_head"))){
+  #     stop("Error in atm_time_series. When upper boundary condition of water flow is set to 'atm_bc_with_surface_runoff',
+  #          then atmospheric time series must have columns 'time', 'precip', 'evap', and 'min_pressure_head'.")
+  #   }
+  # }
 
   if(hydrus_model$water_flow_bcs$upper_bc == "variable_pressure_head"){
     if(!all(colnames(atm_time_series) %in% c("time", "pressure_head"))){
@@ -71,6 +71,19 @@ edit_atmosph_file <- function(hydrus_model,
     if(!all(colnames(atm_time_series) %in% c("time", "flux_top", "min_pressure_head", "pressure_head", "flux_or_head"))){
       stop("Error in atm_time_series. When upper boundary condition of water flow is set to 'variable_pressure_head/flux',
            then atmospheric time series must have columns 'time', 'flux_top', 'min_pressure_head', pressure_head', and 'flux_or_head'.")
+    }
+  }
+
+  ## Determine whether solute concentration columns are needed
+  lChem     <- isTRUE(hydrus_model$main_processes$solute_transport)
+  n_solutes <- if(lChem) as.integer(hydrus_model$solute_transport$number_solutes) else 0L
+
+  if(lChem){
+    req_conc_cols <- if(n_solutes == 1L) c("top_conc", "bot_conc") else
+      c(paste0("top_conc", seq_len(n_solutes)), paste0("bot_conc", seq_len(n_solutes)))
+    if(!all(req_conc_cols %in% colnames(atm_time_series))){
+      stop(paste0("Error in atm_time_series. When solute_transport is TRUE, atm_time_series must contain columns: ",
+                  paste(req_conc_cols, collapse = ", "), "."))
     }
   }
 
@@ -133,9 +146,18 @@ edit_atmosph_file <- function(hydrus_model,
                              ht = atm_time_series$pressure_head)
   }
 
-  ## Determine whether solute concentration columns are needed
-  lChem     <- isTRUE(hydrus_model$main_processes$solute_transport)
-  n_solutes <- if(lChem) as.integer(hydrus_model$solute_transport$number_solutes) else 0L
+  ## Append cTop/cBot columns to fill_in_df from atm_time_series when solute transport is on.
+  ## Input columns are named top_conc/bot_conc (single solute) or top_conc1/bot_conc1, etc.
+  if(lChem){
+    for(s in seq_len(n_solutes)){
+      cTop_nm    <- if(n_solutes == 1L) "cTop"       else paste0("cTop", s)
+      cBot_nm    <- if(n_solutes == 1L) "cBot"       else paste0("cBot", s)
+      atm_top_nm <- if(n_solutes == 1L) "top_conc"   else paste0("top_conc", s)
+      atm_bot_nm <- if(n_solutes == 1L) "bot_conc"   else paste0("bot_conc", s)
+      fill_in_df[[cTop_nm]] <- atm_time_series[[atm_top_nm]]
+      fill_in_df[[cBot_nm]] <- atm_time_series[[atm_bot_nm]]
+    }
+  }
 
   ## Take header lines up to but NOT including the "tAtm" column header line,
   ## then append the appropriate column header for this run
@@ -177,11 +199,10 @@ edit_atmosph_file <- function(hydrus_model,
                     formatC(0, width = 12),   # tBot
                     formatC(0, width = 12))   # Ampl
       for(s in seq_len(n_solutes)){
-        cTop_nm  <- if(n_solutes == 1L) "cTop" else paste0("cTop", s)
-        cBot_nm  <- if(n_solutes == 1L) "cBot" else paste0("cBot", s)
-        cTop_val <- if(!is.null(fill_in_df[[cTop_nm]])) fill_in_df[[cTop_nm]][i] else 0
-        cBot_val <- if(!is.null(fill_in_df[[cBot_nm]])) fill_in_df[[cBot_nm]][i] else 0
-        row <- paste0(row, formatC(cTop_val, width = 12), formatC(cBot_val, width = 12))
+        cTop_nm <- if(n_solutes == 1L) "cTop" else paste0("cTop", s)
+        cBot_nm <- if(n_solutes == 1L) "cBot" else paste0("cBot", s)
+        row <- paste0(row, formatC(fill_in_df[[cTop_nm]][i], width = 12),
+                           formatC(fill_in_df[[cBot_nm]][i], width = 12))
       }
     }
     out <- c(out, paste0(row, " "))
