@@ -98,7 +98,8 @@ edit_soil_profile(fairfield_dual_perm,
                                                b_xz = 1,
                                                d_xz = 1,
                                                mat = c(rep(1, 6), rep(2, 81), rep(3, 14)),
-                                               lay = 1))
+                                               lay = 1,
+                                               fracture_conc = 0))
 
 
 ## Run HYDRUS:

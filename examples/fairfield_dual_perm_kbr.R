@@ -13,8 +13,8 @@ library(readr)
 ## Create a new HYDRUS project:
 ### * parent_directory needs to be the full path and not use dot expansion
 fairfield_dual_perm_kbr <-  create_hydrus_project(project_name = "fairfield_dual_perm_kbr",
-                                              parent_dir = "C:/Users/skati/Documents/runhydrus/examples",
-                                              description = "Replicate Fairfield dual perm model using runhydrus, add artificial KBr solute")
+                                                  parent_dir = "C:/Users/skati/Documents/runhydrus/examples",
+                                                  description = "Replicate Fairfield dual perm model using runhydrus, add artificial KBr solute")
 ## Parameterize model:
 ## Model Units
 fairfield_dual_perm_kbr$model_units <- model_units(mass_unit = "mmol")
@@ -42,12 +42,14 @@ fairfield_dual_perm_kbr$time_variable_bc <- time_variable_bc(time_variable_bc = 
 ## Water Flow Boundary Conditions
 fairfield_dual_perm_kbr$water_flow_bcs <- water_flow_bcs(upper_bc = "atm_bc_with_surface_runoff")
 ## Print Options
-fairfield_dual_perm_kbr$print_options <- print_options(times_to_print = data.frame(times = 1334:1698))
+fairfield_dual_perm_kbr$print_options <- print_options(times_to_print = data.frame(times = 1334:1698),
+                                                       print_times = FALSE,
+                                                       interval_output = 1)
 ## Time Parameters
 fairfield_dual_perm_kbr$time_parameters <- time_parameters(final_model_time = 1698)
 ## Root Water Uptake
 fairfield_dual_perm_kbr$root_water_uptake <- root_water_uptake(root_water_uptake_model = 1,
-                                                           root_water_uptake_params = data.frame(critical_stress_index = 1,
+                                                           root_water_uptake_params = data.frame(critical_stress_index = 0,
                                                                                                  h50 = -800,
                                                                                                  P3 = 3))
 ## Solute Transport
@@ -101,17 +103,17 @@ parameterize_hydrus_model(fairfield_dual_perm_kbr)
 meghans_atmosph <- readr::read_csv("./examples/meghan_atmosph_full_data.csv")
 kbr_conc <- 100 # mmol/cm
 kbr_bc_top <- meghans_atmosph$Prec * kbr_conc
+# readr::write_csv(data.frame(mmol_per_cm = kbr_bc_top), "./examples/kbr_bc_top.csv")
 
 edit_atmosph_file(fairfield_dual_perm_kbr,
                   atm_time_series = data.frame(time = meghans_atmosph$tAtm,
                                                precip = meghans_atmosph$Prec,
                                                evap = meghans_atmosph$rSoil,
+                                               transpiration = meghans_atmosph$rRoot,
                                                min_pressure_head = meghans_atmosph$hCritA,
                                                top_conc = kbr_bc_top,
                                                bot_conc = 0),
                   max_h_at_surface = 0)
-
-
 
 ## Soil Profile Mesh:
 ## mat: nodes 1-6 = material 1 (0 to -8.75 cm), nodes 7-87 = material 2,
@@ -126,8 +128,15 @@ edit_soil_profile(fairfield_dual_perm_kbr,
                                                b_xz = 1,
                                                d_xz = 1,
                                                mat = c(rep(1, 6), rep(2, 81), rep(3, 14)),
-                                               lay = 1))
+                                               lay = 1,
+                                               fracture_conc = 0))
+
+run_hydrus_1D(fairfield_dual_perm_kbr)
 
 
 ## Run HYDRUS:
-run_hydrus_1D(fairfield_dual_perm_kbr)
+# slag <- list(hydrus_project = list(hydrus_version = 5,
+#                                    project_path = "C:/Users/skati/Documents/runhydrus/examples/fairfield_dual_perm_kbr"),
+#              soil_hydraulics = list(soil_hydraulic_model = 8))
+# run_hydrus_1D(slag)
+
