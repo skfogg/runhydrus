@@ -15,7 +15,7 @@ library(runhydrus)
 ```{r new_proj_1, eval=TRUE}
 fairfield_dual_perm_kbr <-  create_hydrus_project(
   project_name = "fairfield_dual_perm_kbr",
-  parent_dir = "../examples",
+  parent_dir = "./examples",
   description = "Dual perm model, add artificial KBr solute",
   check_overwrite = FALSE
 )
