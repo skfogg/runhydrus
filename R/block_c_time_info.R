@@ -15,27 +15,21 @@ block_c_time_info <- function(hydrus_model                              ){
 
   #### *** BLOCK C: TIME INFORMATION *** ####
   # dt  dtMin  dtMax  DMul  DMul2  ItMin   ItMax  MPL
-  selector_template[grep("dt", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 6),
-                                                                        hydrus_model$time_parameters$initial_time_step,
-                                                                        rep(" ", times = 7),
-                                                                        hydrus_model$time_parameters$minimum_time_step,
-                                                                        rep(" ", times = 11),
-                                                                        hydrus_model$time_parameters$maximum_time_step,
-                                                                        rep(" ", times = 5),
-                                                                        hydrus_model$time_parameters$lower_time_step_mult,
-                                                                        rep(" ", times = 5),
-                                                                        hydrus_model$time_parameters$upper_time_step_mult,
-                                                                        rep(" ", times = 5),
-                                                                        hydrus_model$time_parameters$lower_optim_iter_range,
-                                                                        rep(" ", times = 5),
-                                                                        hydrus_model$time_parameters$upper_optim_iter_range,
-                                                                        rep(" ", times = 5),
-                                                                        nrow(hydrus_model$print_options$times_to_print)))
+  selector_template[grep("dt", selector_template) + 1] <- paste0(
+    formatC(hydrus_model$time_parameters$initial_time_step,    width = 11),
+    formatC(hydrus_model$time_parameters$minimum_time_step,    width = 12),
+    formatC(hydrus_model$time_parameters$maximum_time_step,    width = 12),
+    formatC(hydrus_model$time_parameters$lower_time_step_mult, width = 8),
+    formatC(hydrus_model$time_parameters$upper_time_step_mult, width = 8),
+    formatC(hydrus_model$time_parameters$lower_optim_iter_range, width = 6),
+    formatC(hydrus_model$time_parameters$upper_optim_iter_range, width = 6),
+    formatC(nrow(hydrus_model$print_options$times_to_print),   width = 6)
+  )
   # tInit  tMax
-  selector_template[grep("tInit", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 10),
-                                                                           hydrus_model$time_parameters$initial_model_time,
-                                                                           rep(" ", times = 9),
-                                                                           hydrus_model$time_parameters$final_model_time))
+  selector_template[grep("tInit", selector_template) + 1] <- paste0(
+    formatC(hydrus_model$time_parameters$initial_model_time, width = 11),
+    formatC(hydrus_model$time_parameters$final_model_time,   width = 12)
+  )
 
   # lPrintD  nPrintSteps  tPrintInterval  lEnter
   selector_template[grep("lPrintD", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 5),
@@ -47,10 +41,20 @@ block_c_time_info <- function(hydrus_model                              ){
                                                                              rep(" ", times = 7),
                                                                              ifelse(hydrus_model$print_options$print_times, "t", "f")))
 
-  # TPrint(1),TPrint(2),...,TPrint(MPL)
-  selector_template[grep("TPrint", selector_template) + 1] <- stringr::str_flatten(
-    formatC(hydrus_model$print_options$times_to_print$times, width = 12),
-    collapse = "")
+  # TPrint(1),TPrint(2),...,TPrint(MPL) — 6 values per line, each width 12, trailing space
+  times <- hydrus_model$print_options$times_to_print$times
+  tprint_lines <- character(0)
+  for(start in seq(1, length(times), by = 6)){
+    chunk <- times[start:min(start + 5, length(times))]
+    tprint_lines <- c(tprint_lines, paste0(paste0(formatC(chunk, width = 12), collapse = ""), " "))
+  }
+  tprint_idx <- grep("TPrint", selector_template) + 1
+  next_block <- min(grep("^\\*\\*\\*", selector_template)[grep("^\\*\\*\\*", selector_template) >= tprint_idx])
+  selector_template <- c(
+    selector_template[1:(tprint_idx - 1)],
+    tprint_lines,
+    selector_template[next_block:length(selector_template)]
+  )
 
   ## Update SELECTOR.IN
   writeLines(selector_template, file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))

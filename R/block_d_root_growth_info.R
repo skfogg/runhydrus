@@ -110,22 +110,16 @@ block_d_root_growth_info <- function(hydrus_model
         stop("Error in root_growth$root_growth_params. Root depth data.frame must have column names 'initial_root_growth_time', 'harvest_time', 'initial_rooting_depth', 'maximum_rooting_depth', 'time_period'.")
       }
 
-      selector_template[grep("iRFak", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 8),
-                                                                               hydrus_model$root_growth$root_growth_factor,
-                                                                               rep(" ", times = 8),
-                                                                               hydrus_model$root_growth$root_growth_params$initial_root_growth_time,
-                                                                               rep(" ", times = 8),
-                                                                               "0",
-                                                                               rep(" ", times = 8),
-                                                                               hydrus_model$root_growth$root_growth_params$harvest_time,
-                                                                               rep(" ", times = 8),
-                                                                               hydrus_model$root_growth$root_growth_params$initial_rooting_depth,
-                                                                               rep(" ", times = 8),
-                                                                               "0",
-                                                                               rep(" ", times = 8),
-                                                                               hydrus_model$root_growth$root_growth_params$maximum_rooting_depth,
-                                                                               rep(" ", times = 8),
-                                                                               hydrus_model$root_growth$root_growth_params$time_period))
+      selector_template[grep("iRFak", selector_template) + 1] <- paste0(
+        formatC(hydrus_model$root_growth$root_growth_factor,                          width = 9),
+        formatC(hydrus_model$root_growth$root_growth_params$initial_root_growth_time, width = 10),
+        formatC(0,                                                                     width = 10),
+        formatC(hydrus_model$root_growth$root_growth_params$harvest_time,             width = 10),
+        formatC(hydrus_model$root_growth$root_growth_params$initial_rooting_depth,    width = 10),
+        formatC(0,                                                                     width = 10),
+        formatC(hydrus_model$root_growth$root_growth_params$maximum_rooting_depth,    width = 10),
+        formatC(hydrus_model$root_growth$root_growth_params$time_period,              width = 9)
+      )
 
     }
   }

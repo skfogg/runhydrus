@@ -10,9 +10,10 @@
 #' )
 #'
 #' @param project_name Name of the HYDRUS project to create.
-#' @param parent_dir Path to the project folder.
+#' @param parent_dir Path to the parent folder. Accepts absolute paths, relative paths, and \code{~} home-directory expansion.
 #' @param hydrus_version Integer indicating which HYDRUS version to use. Must be version 4 or 5.
 #' @param description Optional project description character string.
+#' @param check_overwrite logical, default TRUE. If FALSE, the function will not check with user if overwrite of files will occur.
 #'
 #' @returns Function returns the default HYDRUS model. Editing of the default model should be done with \code{\link{parameterize_hydrus_model}}.
 #' Set parameters using \code{\link{main_processes}}, \code{\link{model_units}}, \code{\link{geometry}}, \code{\link{print_options}},
@@ -27,13 +28,24 @@
 create_hydrus_project <- function(project_name,
                                   parent_dir,
                                   hydrus_version = 5,
-                                  description = NULL
+                                  description = NULL,
+                                  check_overwrite = TRUE
                                   ){
+
+  ## Resolve parent_dir to an absolute path.
+  ## path.expand() handles ~ first; file.path(getwd(), ...) anchors anything
+  ## still relative (e.g. ".", "./subdir", "../other") before normalizePath()
+  ## cleans up redundant separators and . / .. components.
+  parent_dir <- path.expand(parent_dir)
+  if (!grepl("^([A-Za-z]:[\\\\/]|[\\\\/])", parent_dir)) {
+    parent_dir <- file.path(getwd(), parent_dir)
+  }
+  parent_dir <- normalizePath(parent_dir, mustWork = FALSE)
 
   ## Create new directory if one does not exist:
   project_path <- file.path(parent_dir, project_name)
 
-  if(dir.exists(project_path)) {
+  if(dir.exists(project_path) & isTRUE(check_overwrite)){
 
     # cat(paste0("Folder ",
     #            project_name,
@@ -49,7 +61,17 @@ create_hydrus_project <- function(project_name,
     } else {
       stop("HYDRUS project not created\n")
     }
-  } else {
+  }
+  # else {
+  #   dir.create(project_path)
+  # }
+  #
+  if(dir.exists(project_path) & isFALSE(check_overwrite)){
+    unlink(project_path, recursive = TRUE, force = TRUE)
+    dir.create(project_path)
+  }
+
+  if(isFALSE(dir.exists(project_path))){
     dir.create(project_path)
   }
 

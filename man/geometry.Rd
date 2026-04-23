@@ -11,6 +11,7 @@ geometry(
  profile_depth = 100,
  observation_nodes_n = 0,
  observation_nodes = NA
+ relative_gravity = 1.0
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ geometry(
 \item{observation_nodes_n}{integer. The number of observation nodes}
 
 \item{observation_nodes}{integer or vector of integers indicating the node number of observation nodes.}
+
+\item{relative_gravity}{numeric. Gravity for Earth vertical = 1; Earth horizontal = 0; Moon = 0.166; Mars = 0.38.}
 }
 \value{
 list of parameters

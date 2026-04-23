@@ -36,23 +36,21 @@ block_f_solute_transport_info <- function(hydrus_model){
 
   #   Epsi  lUpW  lArtD lTDep    cTolA    cTolR   MaxItC    PeCr  No.Solutes  lTort   iBacter   lFiltr  nChPar
   # 0.5     f     f     f         0         0     1        2        1       t       0        f       16
-  selector_template[grep("Epsi", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 2),
-                                                                          paste0(
-                                                                            c(tws_options[tws_options$option == hydrus_model$solute_transport$time_weighting_scheme, "Epsi"],
-                                                                              sws_options[sws_options$option == hydrus_model$solute_transport$space_weighting_scheme, "lUpW"],
-                                                                              sws_options[sws_options$option == hydrus_model$solute_transport$space_weighting_scheme, "lArtD"],
-                                                                              ifelse(hydrus_model$solute_transport$temperature_dependence, "t", "f"),
-                                                                              hydrus_model$solute_transport$nonlinear_adsorption_iteration_criteria$absolute_conc_tol,
-                                                                              hydrus_model$solute_transport$nonlinear_adsorption_iteration_criteria$relative_conc_tol,
-                                                                              hydrus_model$solute_transport$nonlinear_adsorption_iteration_criteria$maximum_n_iteration,
-                                                                              hydrus_model$solute_transport$stability_criterion,
-                                                                              hydrus_model$solute_transport$number_solutes,
-                                                                              ifelse(hydrus_model$solute_transport$use_tortuosity, "t", "f"),
-                                                                              "0",
-                                                                              "f",
-                                                                              "16"),
-                                                                            collapse = "     "
-                                                                          )))
+  selector_template[grep("Epsi", selector_template) + 1] <- paste0(
+    formatC(tws_options[tws_options$option == hydrus_model$solute_transport$time_weighting_scheme, "Epsi"], width = 5),
+    sprintf("%6s",  sws_options[sws_options$option == hydrus_model$solute_transport$space_weighting_scheme, "lUpW"]),
+    sprintf("%6s",  sws_options[sws_options$option == hydrus_model$solute_transport$space_weighting_scheme, "lArtD"]),
+    sprintf("%6s",  ifelse(hydrus_model$solute_transport$temperature_dependence, "t", "f")),
+    formatC(hydrus_model$solute_transport$nonlinear_adsorption_iteration_criteria$absolute_conc_tol, width = 10),
+    formatC(hydrus_model$solute_transport$nonlinear_adsorption_iteration_criteria$relative_conc_tol, width = 10),
+    formatC(hydrus_model$solute_transport$nonlinear_adsorption_iteration_criteria$maximum_n_iteration, width = 6),
+    formatC(hydrus_model$solute_transport$stability_criterion,  width = 9),
+    formatC(hydrus_model$solute_transport$number_solutes,       width = 9),
+    sprintf("%8s",  ifelse(hydrus_model$solute_transport$use_tortuosity, "t", "f")),
+    formatC(0,  width = 8),
+    sprintf("%9s",  "f"),
+    formatC(16, width = 9)
+  )
 
   # iNonEqul lWatDep   lDualNEq   lInitM   lInitEq    lTort    lHP1BC   lFumigant    lPFAS   lSurfact   lCFTr
   # 0         f         f         f         f         f         t         f         f         f         f
@@ -67,12 +65,13 @@ block_f_solute_transport_info <- function(hydrus_model){
   # 1.5        17.5           1           0
   hold_rest_of_block_f <- selector_template[(grep("DifW", selector_template)):length(selector_template)]
   for(i in 1:hydrus_model$geometry$number_materials){
-    selector_template[grep("Bulk.d.", selector_template) + i] <- stringr::str_flatten(rep(" ", times = 8),
-                                                                                      paste0(c(hydrus_model$solute_transport$material_params$bulk_density,
-                                                                                               hydrus_model$solute_transport$material_params$longitudinal_dispersivity,
-                                                                                               hydrus_model$solute_transport$material_params$fraction_of_adsorption_sites,
-                                                                                               hydrus_model$solute_transport$material_params$immobile_water_content),
-                                                                                             collapse = "        "))
+    selector_template[grep("Bulk.d.", selector_template) + i] <- paste0(
+      formatC(hydrus_model$solute_transport$material_params$bulk_density,            width = 11),
+      formatC(hydrus_model$solute_transport$material_params$longitudinal_dispersivity, width = 12),
+      formatC(hydrus_model$solute_transport$material_params$fraction_adsorption_sites, width = 12),
+      formatC(hydrus_model$solute_transport$material_params$immobile_water_content,   width = 12),
+      " "
+    )
   }
   selector_template <- c(selector_template[1:(grep("Bulk.d.", selector_template) + hydrus_model$geometry$number_materials)],
                          hold_rest_of_block_f)
@@ -81,10 +80,11 @@ block_f_solute_transport_info <- function(hydrus_model){
   # 0           0
   hold_rest_of_block_f <- selector_template[(grep("Kd", selector_template)):length(selector_template)]
   for(i in 1:hydrus_model$solute_transport$number_solutes){
-    selector_template[grep("DifW", selector_template) + i] <- stringr::str_flatten(rep(" ", times = 9),
-                                                                                      paste0(c(hydrus_model$solute_transport$solute_params$molecular_diffusion_free_water,
-                                                                                               hydrus_model$solute_transport$solute_params$molecular_diffusion_soil_air),
-                                                                                             collapse = "        "))
+    selector_template[grep("DifW", selector_template) + i] <- paste0(
+      formatC(hydrus_model$solute_transport$solute_params$molecular_diffusion_free_water, width = 11),
+      formatC(hydrus_model$solute_transport$solute_params$molecular_diffusion_soil_air,   width = 12),
+      " "
+    )
   }
   selector_template <- c(selector_template[1:(grep("DifW", selector_template) + hydrus_model$geometry$number_materials)],
                          hold_rest_of_block_f)
@@ -93,33 +93,37 @@ block_f_solute_transport_info <- function(hydrus_model){
   #           0           0           1           0           0           0           0           0           0           0           0           0           0           0
   hold_rest_of_block_f <- selector_template[grep("kTopSolute", selector_template):length(selector_template)]
   for(i in 1:hydrus_model$geometry$number_materials){
-    selector_template[grep("Kd", selector_template) + i] <- stringr::str_flatten(rep(" ", times = 10),
-                                                                                      paste0(c(hydrus_model$solute_transport$solute_reaction_params$Kd,
-                                                                                               hydrus_model$solute_transport$solute_reaction_params$Nu,
-                                                                                               hydrus_model$solute_transport$solute_reaction_params$Beta,
-                                                                                               hydrus_model$solute_transport$solute_reaction_params$Henry,
-                                                                                               hydrus_model$solute_transport$solute_reaction_params$SnkL1,
-                                                                                               hydrus_model$solute_transport$solute_reaction_params$SnkS1,
-                                                                                               hydrus_model$solute_transport$solute_reaction_params$SnkG1,
-                                                                                               hydrus_model$solute_transport$solute_reaction_params$SnkL1_prime,
-                                                                                               hydrus_model$solute_transport$solute_reaction_params$SnkS1_prime,
-                                                                                               hydrus_model$solute_transport$solute_reaction_params$SnkG1_prime,
-                                                                                               hydrus_model$solute_transport$solute_reaction_params$SnkL0,
-                                                                                               hydrus_model$solute_transport$solute_reaction_params$SnkS0,
-                                                                                               hydrus_model$solute_transport$solute_reaction_params$SnkG0,
-                                                                                               hydrus_model$solute_transport$solute_reaction_params$Alpha),
-                                                                                             collapse = "        "))
+    rp <- hydrus_model$solute_transport$solute_reaction_params
+    selector_template[grep("Kd", selector_template) + i] <- paste0(
+      formatC(rp$Kd,          width = 11),
+      formatC(rp$Nu,          width = 12),
+      formatC(rp$Beta,        width = 12),
+      formatC(rp$Henry,       width = 12),
+      formatC(rp$SnkL1,       width = 12),
+      formatC(rp$SnkS1,       width = 12),
+      formatC(rp$SnkG1,       width = 12),
+      formatC(rp$SnkL1_prime, width = 12),
+      formatC(rp$SnkS1_prime, width = 12),
+      formatC(rp$SnkG1_prime, width = 12),
+      formatC(rp$SnkL0,       width = 12),
+      formatC(rp$SnkS0,       width = 12),
+      formatC(rp$SnkG0,       width = 12),
+      formatC(rp$Alpha,       width = 12),
+      " "
+    )
   }
   selector_template <- c(selector_template[1:(grep("Kd", selector_template) + hydrus_model$geometry$number_materials)],
                          hold_rest_of_block_f)
 
   #       kTopSolute  SolTop    kBotSolute  SolBot
   #          -1           0           0           0
-  selector_template[grep("kTopSolute", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", time = 9),
-                                                                                       upper_bc_options[upper_bc_options$option == hydrus_model$solute_transport$solute_transport_bcs$upper_bc, "kTopSolute"],
-                                                                                       "0",
-                                                                                       lower_bc_options[lower_bc_options$option == hydrus_model$solute_transport$solute_transport_bcs$lower_bc, "kBotSolute"],
-                                                                                       "0"))
+  selector_template[grep("kTopSolute", selector_template) + 1] <- paste0(
+    formatC(upper_bc_options[upper_bc_options$option == hydrus_model$solute_transport$solute_transport_bcs$upper_bc, "kTopSolute"], width = 11),
+    formatC(0, width = 12),
+    formatC(lower_bc_options[lower_bc_options$option == hydrus_model$solute_transport$solute_transport_bcs$lower_bc, "kBotSolute"], width = 12),
+    formatC(0, width = 12),
+    " "
+  )
   if(hydrus_model$solute_transport$solute_transport_bcs$upper_bc == "stagnant_bc_volotile_solute"){
     selector_template <- c(selector_template[1:(grep("kTopSolute", selector_template) + 1)],
                            "      dSurf          cAtm",
@@ -137,11 +141,12 @@ block_f_solute_transport_info <- function(hydrus_model){
   }
 
 
-  selector_template[grep("tPulse", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", time = 8),
-                                                                                     hydrus_model$solute_transport$pulse_duration))
+  selector_template[grep("tPulse", selector_template) + 1] <- formatC(hydrus_model$solute_transport$pulse_duration, width = 11)
 
-  selector_template <- c(selector_template,
-                         "*** END OF INPUT FILE 'SELECTOR.IN' ************************************")
+  if(length(grep("END OF INPUT FILE", selector_template)) == 0){
+    selector_template <- c(selector_template,
+                           "*** END OF INPUT FILE 'SELECTOR.IN' ************************************")
+  }
 
   ## Update Selector.in
   writeLines(selector_template, file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))

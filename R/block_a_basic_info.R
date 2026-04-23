@@ -30,8 +30,8 @@ block_a_basic_info <- function(hydrus_model){
                                                                     hydrus_model$model_units$mass_unit)
 
   ## Start with all model options turned off:
-  basic_opt_1 <- data.frame(keyword = stringr::str_split(selector_template[grep("lWat", selector_template)], " {1,}", simplify = T)[1,],
-                            idx_loc = sort(unique(unlist(stringr::str_locate_all(selector_template[grep("lWat", selector_template)+1], "t|f")))),
+  basic_opt_1 <- data.frame(keyword = stringr::str_split(selector_template[grep("lWat ", selector_template)], " {1,}", simplify = T)[1,],
+                            idx_loc = sort(unique(unlist(stringr::str_locate_all(selector_template[grep("lWat ", selector_template)+1], "t|f")))),
                             on = "f")
   basic_opt_2 <- data.frame(keyword = stringr::str_split(selector_template[grep("lSnow", selector_template)], " {1,}", simplify = T)[1,],
                             idx_loc = sort(unique(unlist(stringr::str_locate_all(selector_template[grep("lSnow", selector_template)+1], "t|f")))),
@@ -64,7 +64,7 @@ block_a_basic_info <- function(hydrus_model){
   if(hydrus_model$time_variable_bc$time_variable_bc){
     basic_opt_1[basic_opt_1$keyword == "lVariabBC","on"] <- "t"
   }
-  if(hydrus_model$solute_transport$solute_transport_model == "equilibrium_model"){
+  if(hydrus_model$solute_transport$equilibrium_adsorption){
     basic_opt_1[basic_opt_1$keyword == "lEquil","on"] <- "t"
   }
   if(hydrus_model$main_processes$inverse){
@@ -120,12 +120,11 @@ block_a_basic_info <- function(hydrus_model){
   selector_template[grep("lSnow", selector_template) + 1] <- stringr::str_flatten(opt_2[1,])
 
   ## set the number of materials
-  geometry_line <- stringr::str_split(selector_template[grep("NMat", selector_template) + 1], "", simplify = T)
+  geometry_line <- stringr::str_split(selector_template[grep("NMat ", selector_template) + 1], "", simplify = T)
   geometry_line[1,3] <- as.character(hydrus_model$geometry$number_materials)
   geometry_line[1,11] <- as.character(hydrus_model$geometry$number_subregions)
-  # CosAlpha is gravity
-  selector_template[grep("NMat", selector_template) + 1] <- stringr::str_flatten(geometry_line)
-
+  geometry_line[1,19] <- as.character(hydrus_model$geometry$relative_gravity)
+  selector_template[grep("NMat ", selector_template) + 1] <- stringr::str_flatten(geometry_line)
 
   ## Update SELECTOR.IN
   writeLines(selector_template, file.path(hydrus_model$hydrus_project$project_path, "SELECTOR.IN"))

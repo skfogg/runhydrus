@@ -9,7 +9,10 @@ edit_atmosph_file(
  atm_time_series = data.frame(time = 1,
                               precip = 0,
                               evap = 0,
-                              min_pressure_head = 100000),
+                              transpiration = 0,
+                              min_pressure_head = 100000,
+                              top_conc = 0,
+                              bot_conc = 0),
  max_h_at_surface = 0
 )
 }

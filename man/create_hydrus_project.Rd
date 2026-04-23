@@ -14,11 +14,13 @@ create_hydrus_project(
 \arguments{
 \item{project_name}{Name of the HYDRUS project to create.}
 
-\item{parent_dir}{Path to the project folder.}
+\item{parent_dir}{Path to the parent folder. Accepts absolute paths, relative paths, and \code{~} home-directory expansion.}
 
 \item{hydrus_version}{Integer indicating which HYDRUS version to use. Must be version 4 or 5.}
 
 \item{description}{Optional project description character string.}
+
+\item{check_overwrite}{logical, default TRUE. If FALSE, the function will not check with user if overwrite of files will occur.}
 }
 \value{
 Function returns the default HYDRUS model. Editing of the default model should be done with \code{\link{parameterize_hydrus_model}}.

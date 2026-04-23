@@ -98,6 +98,7 @@ model_units <- function(time_unit = "days",
 #'  profile_depth = 100,
 #'  observation_nodes_n = 0,
 #'  observation_nodes = NA
+#'  relative_gravity = 1.0
 #' )
 #'
 #' @param number_materials integer. The number of materials in model.
@@ -106,6 +107,7 @@ model_units <- function(time_unit = "days",
 #' @param profile_depth integer. Depth of the model soil profile.
 #' @param observation_nodes_n integer. The number of observation nodes
 #' @param observation_nodes integer or vector of integers indicating the node number of observation nodes.
+#' @param relative_gravity numeric. Gravity for Earth vertical = 1; Earth horizontal = 0; Moon = 0.166; Mars = 0.38.
 #'
 #' @returns list of parameters
 #' @export
@@ -118,13 +120,15 @@ geometry <- function(number_materials = 1,
                      number_nodes = 101,
                      profile_depth = 100,
                      observation_nodes_n = 0,
-                     observation_nodes = NA){
+                     observation_nodes = NA,
+                     relative_gravity = 1.0){
   return(list(number_materials = number_materials,
               number_subregions = number_subregions,
               number_nodes = number_nodes,
               profile_depth = profile_depth,
               observation_nodes_n = observation_nodes_n,
-              observation_nodes = observation_nodes))
+              observation_nodes = observation_nodes,
+              relative_gravity = 1.0))
 
 }
 

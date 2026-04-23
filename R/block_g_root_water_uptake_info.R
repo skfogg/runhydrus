@@ -25,14 +25,13 @@ block_g_root_water_uptake_info <- function(hydrus_model){
   # *** BLOCK G: ROOT WATER UPTAKE INFORMATION ***
   #  Model  (0 - Feddes, 1 - S shape)  cRootMax    OmegaC
   # 0                                   1
-  selector_template[grep("Feddes", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 8),
-                                                                            hydrus_model$root_water_uptake$root_water_uptake_model,
-                                                                            rep(" ", times = 36),
-                                                                            ifelse(hydrus_model$root_water_uptake$root_water_uptake_model %in% c(0,1),
-                                                                                   hydrus_model$root_water_uptake$root_water_uptake_params$critical_stress_index,
-                                                                                   " "),
-                                                                            rep(" ", times = 11),
-                                                                            " "))# OmegaC
+  selector_template[grep("Feddes", selector_template) + 1] <- paste0(
+    formatC(hydrus_model$root_water_uptake$root_water_uptake_model, width = 9),
+    formatC(ifelse(hydrus_model$root_water_uptake$root_water_uptake_model %in% c(0,1),
+                   hydrus_model$root_water_uptake$root_water_uptake_params$critical_stress_index,
+                   0), width = 36),
+    formatC(1, width = 12)   # OmegaC
+  )
 
 
   ## cRootMax = CRITICAL STESS INDEX (JARVIS) option. Must be between 0.01 and 1. Default 1. Only available for Feddes and S-Shaped
@@ -72,10 +71,12 @@ block_g_root_water_uptake_info <- function(hydrus_model){
     if(any(!colnames(hydrus_model$root_water_uptake$root_water_uptake_params) %in% c("critical_stress_index","h50","P3"))){
       stop("Error in root_water_uptake$root_water_uptake_params. For the S-Shaped model (1) column names must be 'critical_stress_index','h50','P3'.")
     }
-    selector_template[grep("h50", selector_template) + 1] <- stringr::str_flatten(c(rep(" ", times = 6),
-                                                                           hydrus_model$root_water_uptake$root_water_uptake_params$h50,
-                                                                           rep(" ", times = 6),
-                                                                           hydrus_model$root_water_uptake$root_water_uptake_params$P3))
+    selector_template[grep("h50", selector_template) + 1] <- paste0(
+      formatC(hydrus_model$root_water_uptake$root_water_uptake_params$h50, width = 9),
+      formatC(hydrus_model$root_water_uptake$root_water_uptake_params$P3,  width = 10)
+    )
+    selector_template[grep("h50", selector_template) + 2] <- "     Solute Reduction"
+    selector_template[grep("h50", selector_template) + 3] <- "        f"
   }
 
   if(hydrus_model$root_water_uptake$root_water_uptake_model == 2){
@@ -128,6 +129,12 @@ block_g_root_water_uptake_info <- function(hydrus_model){
                                                                                hydrus_model$root_water_uptake$root_water_uptake_params$a,
                                                                                rep(" ", times = 6),
                                                                                hydrus_model$root_water_uptake$root_water_uptake_params$`H-Wilt`))
+  }
+
+  if(length(grep("END OF INPUT FILE", selector_template)) == 0){
+    selector_template <- c(selector_template,
+                           "*** END OF INPUT FILE 'SELECTOR.IN' ************************************",
+                           "")
   }
 
   ## Update SELECTOR.IN

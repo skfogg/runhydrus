@@ -18,7 +18,8 @@ edit_soil_profile(
                               b_xz = 1,
                               d_xz = 1,
                               mat = 1,
-                              lay = 1)
+                              lay = 1,
+                              fracture_conc = 0)
 )
 }
 \arguments{
@@ -42,7 +43,7 @@ Set PROFILE.DAT file
 \describe{
  \item{\code{mesh_density}}{Column names of data.frame must be \code{"fixed_points"}, \code{"upper_relative_size_fe"}, and \code{"lower_relative_size_fe"}. Finite element (FE) sizes are proportionally distributed according to \code{"upper_relative_size_fe"} and \code{"lower_relative_size_fe"} between the fixed points provided.}
  \item{\code{mesh_nodes_manual}}{Column names of data.frame must be \code{"number"} and \code{"z"}. Number is the node ID number and z is the coordinate depth (negative, in cm).}
- \item{\code{nodal_soil_properties}}{Named list with elements \code{"h"} (initial pressure head), \code{"root"} (root water uptake distribution; 0 outside root zone), \code{"a_xz"} (scaling factor for pressure head), \code{"b_xz"} (scaling factor for saturated hydraulic conductivity), \code{"d_xz"} (scaling factor for water content), \code{"mat"} (material number; scalar or per-node vector), \code{"lay"} (subregion). Optionally include \code{"temp"} (initial nodal temperature) when heat transport is enabled.}
+ \item{\code{nodal_soil_properties}}{Named list with elements \code{"h"} (initial pressure head), \code{"root"} (root water uptake distribution; 0 outside root zone), \code{"a_xz"} (scaling factor for pressure head), \code{"b_xz"} (scaling factor for saturated hydraulic conductivity), \code{"d_xz"} (scaling factor for water content), \code{"mat"} (material number; scalar or per-node vector), \code{"lay"} (subregion). Optionally include \code{"temp"} (initial nodal temperature) when heat transport is enabled. For dual-permeability models with solute transport (\code{soil_hydraulic_model = 8} and \code{main_processes$solute_transport = TRUE}), must also include \code{"fracture_conc"} (initial solute concentration in the fracture domain). Scalar values are recycled to all nodes; vectors must have length equal to the number of nodes.}
 }
 }
 \examples{

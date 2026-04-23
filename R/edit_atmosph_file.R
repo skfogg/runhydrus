@@ -5,7 +5,10 @@
 #'  atm_time_series = data.frame(time = 1,
 #'                               precip = 0,
 #'                               evap = 0,
-#'                               min_pressure_head = 100000),
+#'                               transpiration = 0,
+#'                               min_pressure_head = 100000,
+#'                               top_conc = 0,
+#'                               bot_conc = 0),
 #'  max_h_at_surface = 0
 #' )
 #'
@@ -19,9 +22,12 @@
 #' @examples edit_atmosph_file(hydrus_model, max_h_at_surface = 5)
 edit_atmosph_file <- function(hydrus_model,
                               atm_time_series = data.frame(time = 1,
-                                                               precip = 0,
-                                                               evap = 0,
-                                                               min_pressure_head = 100000),
+                                                           precip = 0,
+                                                           evap = 0,
+                                                           transpiration = 0,
+                                                           min_pressure_head = 100000,
+                                                           top_conc = 0,
+                                                           bot_conc = 0),
                               max_h_at_surface = 0
 
 
@@ -75,10 +81,10 @@ edit_atmosph_file <- function(hydrus_model,
   }
 
   ## Determine whether solute concentration columns are needed
-  lChem     <- isTRUE(hydrus_model$main_processes$solute_transport)
-  n_solutes <- if(lChem) as.integer(hydrus_model$solute_transport$number_solutes) else 0L
+  solute_transport     <- isTRUE(hydrus_model$main_processes$solute_transport)
+  n_solutes <- if(solute_transport) as.integer(hydrus_model$solute_transport$number_solutes) else 0L
 
-  if(lChem){
+  if(solute_transport){
     req_conc_cols <- if(n_solutes == 1L) c("top_conc", "bot_conc") else
       c(paste0("top_conc", seq_len(n_solutes)), paste0("bot_conc", seq_len(n_solutes)))
     if(!all(req_conc_cols %in% colnames(atm_time_series))){
@@ -123,7 +129,7 @@ edit_atmosph_file <- function(hydrus_model,
     fill_in_df <- data.frame(tAtm  = atm_time_series$time,
                              Prec  = atm_time_series$precip,
                              rSoil = atm_time_series$evap,
-                             rRoot = 0,
+                             rRoot = atm_time_series$transpiration,
                              hCritA = atm_time_series$min_pressure_head,
                              rB = 0, hB = 0, ht = 0)
   }
@@ -148,7 +154,7 @@ edit_atmosph_file <- function(hydrus_model,
 
   ## Append cTop/cBot columns to fill_in_df from atm_time_series when solute transport is on.
   ## Input columns are named top_conc/bot_conc (single solute) or top_conc1/bot_conc1, etc.
-  if(lChem){
+  if(solute_transport){
     for(s in seq_len(n_solutes)){
       cTop_nm    <- if(n_solutes == 1L) "cTop"       else paste0("cTop", s)
       cBot_nm    <- if(n_solutes == 1L) "cBot"       else paste0("cBot", s)
@@ -164,7 +170,7 @@ edit_atmosph_file <- function(hydrus_model,
   header_idx <- grep("tAtm", atmosph_template)
   out <- atmosph_template[1:(header_idx - 1)]
 
-  if(lChem){
+  if(solute_transport){
     ## Build cTop/cBot pairs for each solute (no number suffix when n_solutes == 1)
     solute_hdrs <- paste(rep(c("        cTop", "        cBot"), n_solutes), collapse = "")
     out <- c(out, paste0(
@@ -184,16 +190,16 @@ edit_atmosph_file <- function(hydrus_model,
   ## cTop/cBot values are taken from fill_in_df if present, otherwise default to 0.
   for(i in seq_len(nrow(fill_in_df))){
     row <- paste0(
-      formatC(fill_in_df$tAtm[i],   width = 11),
-      formatC(fill_in_df$Prec[i],   width = 12),
-      formatC(fill_in_df$rSoil[i],  width = 12),
-      formatC(fill_in_df$rRoot[i],  width = 12),
-      formatC(fill_in_df$hCritA[i], width = 12, format = "fg"),
-      formatC(fill_in_df$rB[i],     width = 12),
-      formatC(fill_in_df$hB[i],     width = 12),
-      formatC(fill_in_df$ht[i],     width = 12)
+      formatC(fill_in_df$tAtm[i],   width = 11, format = "g", digits = 15),
+      formatC(fill_in_df$Prec[i],   width = 12, format = "g", digits = 15),
+      formatC(fill_in_df$rSoil[i],  width = 12, format = "g", digits = 15),
+      formatC(fill_in_df$rRoot[i],  width = 12, format = "g", digits = 15),
+      formatC(fill_in_df$hCritA[i], width = 12, format = "fg", digits = 15),
+      formatC(fill_in_df$rB[i],     width = 12, format = "g", digits = 15),
+      formatC(fill_in_df$hB[i],     width = 12, format = "g", digits = 15),
+      formatC(fill_in_df$ht[i],     width = 12, format = "g", digits = 15)
     )
-    if(lChem){
+    if(solute_transport){
       row <- paste0(row,
                     formatC(0, width = 12),   # tTop
                     formatC(0, width = 12),   # tBot
@@ -201,8 +207,8 @@ edit_atmosph_file <- function(hydrus_model,
       for(s in seq_len(n_solutes)){
         cTop_nm <- if(n_solutes == 1L) "cTop" else paste0("cTop", s)
         cBot_nm <- if(n_solutes == 1L) "cBot" else paste0("cBot", s)
-        row <- paste0(row, formatC(fill_in_df[[cTop_nm]][i], width = 12),
-                           formatC(fill_in_df[[cBot_nm]][i], width = 12))
+        row <- paste0(row, formatC(fill_in_df[[cTop_nm]][i], width = 12, format = "g", digits = 15),
+                           formatC(fill_in_df[[cBot_nm]][i], width = 12, format = "g", digits = 15))
       }
     }
     out <- c(out, paste0(row, " "))

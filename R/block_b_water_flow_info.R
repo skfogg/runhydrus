@@ -187,13 +187,33 @@ block_b_water_flow_info <- function(hydrus_model){
 
   # ----------------------------------------------------------------
   ## Assign soil hydraulic property parameters ####
-  ## NOTE: this creates three spaces between each number, where the original spacing is mode variable--I'm not sure if it will matter
+  ## Helper: concatenate formatted parts, inserting one space between any two
+  ## adjacent parts that would otherwise touch (both non-whitespace at boundary).
+  join_params <- function(parts) {
+    out <- parts[[1]]
+    for(j in seq_along(parts)[-1]){
+      if(!grepl("^\\s", parts[[j]]) && !grepl("\\s$", parts[[j - 1]])){
+        out <- paste0(out, " ")
+      }
+      out <- paste0(out, parts[[j]])
+    }
+    out
+  }
+
   block_c_and_below <- selector_template[grep("BLOCK C", selector_template):length(selector_template)]
 
-  for(i in 1:hydrus_model$geometry$number_materials){
-    selector_template[grep("thr ", selector_template)+i] <- paste0("  ",
-                                                                 hydrus_model$soil_hydraulics$soil_hydraulic_parameters[i,c("theta_r", "theta_s", "alpha", "n", "K_s", "l")],
-                                                                 collapse = "    ")
+  for(i in seq_len(hydrus_model$geometry$number_materials)){
+    p <- hydrus_model$soil_hydraulics$soil_hydraulic_parameters[i, ]
+    selector_template[grep("thr ", selector_template)+i] <- paste0(
+      join_params(c(
+        formatC(p$theta_r, width = 7,  format = "g", digits = 15),
+        formatC(p$theta_s, width = 8,  format = "g", digits = 15),
+        formatC(p$alpha,   width = 8,  format = "g", digits = 15),
+        formatC(p$n,       width = 8,  format = "g", digits = 15),
+        formatC(p$K_s,     width = 11, format = "g", digits = 15),
+        formatC(p$l,       width = 8,  format = "g", digits = 15)
+      )), " "
+    )
   }
   selector_template <- c(selector_template[1:(grep("thr ", selector_template)+hydrus_model$geometry$number_materials)],
                          block_c_and_below)
@@ -206,10 +226,23 @@ block_b_water_flow_info <- function(hydrus_model){
     # 0     0.8    0.08       2       2496     0.5     0.1      15     0.4     0.1    0.02496
     selector_template <- c(selector_template[1:(grep("thr ", selector_template) + hydrus_model$geometry$number_materials)],
                            "  thrFr   thsFr  AlfaFr     nFr       KsFr     lFr       W    beta   gamma       a        Ka")
-    for(i in 1:hydrus_model$geometry$number_materials){
-      selector_template[grep("thrFr ", selector_template)+i] <- paste0("  ",
-                                                                       hydrus_model$soil_hydraulics$soil_hydraulic_parameters[i, c("theta_r_fr", "theta_s_fr", "alpha_fr", "n_fr", "K_s_fr", "l_fr", "w", "beta", "gamma", "a", "K_a")],
-                                                                     collapse = "    ")
+    for(i in seq_len(hydrus_model$geometry$number_materials)){
+      p <- hydrus_model$soil_hydraulics$soil_hydraulic_parameters[i, ]
+      selector_template[grep("thrFr ", selector_template)+i] <- paste0(
+        join_params(c(
+          formatC(p$theta_r_fr, width = 7,  format = "g", digits = 15),
+          formatC(p$theta_s_fr, width = 8,  format = "g", digits = 15),
+          formatC(p$alpha_fr,   width = 8,  format = "g", digits = 15),
+          formatC(p$n_fr,       width = 8,  format = "g", digits = 15),
+          formatC(p$K_s_fr,     width = 11, format = "g", digits = 15),
+          formatC(p$l_fr,       width = 8,  format = "g", digits = 15),
+          formatC(p$w,          width = 8,  format = "g", digits = 15),
+          formatC(p$beta,       width = 8,  format = "g", digits = 15),
+          formatC(p$gamma,      width = 8,  format = "g", digits = 15),
+          formatC(p$a,          width = 8,  format = "g", digits = 15),
+          formatC(p$K_a,        width = 11, format = "g", digits = 15)
+        )), " "
+      )
     }
     selector_template <- c(selector_template[1:(grep("thrFr ", selector_template)+hydrus_model$geometry$number_materials)],
                            block_c_and_below)
