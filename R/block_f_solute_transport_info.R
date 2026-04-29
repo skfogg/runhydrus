@@ -66,10 +66,10 @@ block_f_solute_transport_info <- function(hydrus_model){
   hold_rest_of_block_f <- selector_template[(grep("DifW", selector_template)):length(selector_template)]
   for(i in 1:hydrus_model$geometry$number_materials){
     selector_template[grep("Bulk.d.", selector_template) + i] <- paste0(
-      formatC(hydrus_model$solute_transport$material_params$bulk_density,            width = 11),
-      formatC(hydrus_model$solute_transport$material_params$longitudinal_dispersivity, width = 12),
-      formatC(hydrus_model$solute_transport$material_params$fraction_adsorption_sites, width = 12),
-      formatC(hydrus_model$solute_transport$material_params$immobile_water_content,   width = 12),
+      formatC(hydrus_model$solute_transport$material_params$bulk_density[i],            width = 11),
+      formatC(hydrus_model$solute_transport$material_params$longitudinal_dispersivity[i], width = 12),
+      formatC(hydrus_model$solute_transport$material_params$fraction_adsorption_sites[i], width = 12),
+      formatC(hydrus_model$solute_transport$material_params$immobile_water_content[i],   width = 12),
       " "
     )
   }

@@ -54,6 +54,7 @@ read_hydrus_model <- function(project_path) {
   nmat_vals         <- split_ws(selector[grep("^NMat", selector) + 1])
   number_materials  <- as.integer(nmat_vals[1])
   number_subregions <- as.integer(nmat_vals[2])
+  relative_gravity  <- as.numeric(nmat_vals[3])
 
   ## -----------------------------------------------------------------------
   ## BLOCK B
@@ -484,6 +485,7 @@ read_hydrus_model <- function(project_path) {
     geometry = list(
       number_materials    = number_materials,
       number_subregions   = number_subregions,
+      relative_gravity    = relative_gravity,
       number_nodes        = number_nodes,
       profile_depth       = profile_depth,
       observation_nodes_n = observation_nodes_n,
