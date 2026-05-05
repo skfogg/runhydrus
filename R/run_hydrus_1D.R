@@ -14,6 +14,11 @@ run_hydrus_1D <- function(hydrus_model,
                           hydrus_path = NULL,
                           show_output = TRUE){
 
+
+  ## expand to full path:
+  hydrus_project_path  <- normalizePath(hydrus_model$hydrus_project$project_path)
+
+  ## determine OS
   os_type <- .Platform$OS.type
 
   if(is.null(hydrus_path)) {
@@ -58,7 +63,7 @@ run_hydrus_1D <- function(hydrus_model,
   #
   # if(!file.exists(file_level01)) file(file_level01, "w+")
   #
-  write(x = noquote(hydrus_model$hydrus_project$project_path),
+  write(x = noquote(hydrus_project_path),
         file = file_level01,
         append = F)
 
