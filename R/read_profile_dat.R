@@ -132,7 +132,7 @@ read_profile_dat <- function(project_path) {
   ## -----------------------------------------------------------------------
   obs_line_idx <- node_end + 1L
   obs_n        <- as.integer(split_ws(profile[obs_line_idx])[1])
-  obs_nodes    <- integer(0)
+  obs_nodes    <- NA
   if (obs_n > 0L && length(profile) >= obs_line_idx + 1L) {
     obs_nodes <- as.integer(split_ws(profile[obs_line_idx + 1L]))
   }
