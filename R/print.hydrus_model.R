@@ -1,3 +1,13 @@
+#' print.hydrus_model
+#'
+#' @param x object of class 'hydrus_model
+#' @param indent indentation width
+#' @param color logical, default TRUE
+#'
+#' @returns prints list in pretty way
+#' @export
+#'
+#' @examples print
 print.hydrus_model <- function(x, indent = 0, color = TRUE) {
   # Ensure input is a list
   if (!is.list(x)) {
@@ -9,11 +19,11 @@ print.hydrus_model <- function(x, indent = 0, color = TRUE) {
 
   # Define a palette for different nesting levels
   palette <- list(
-    green$bold,
-    blue$bold,
-    magenta$bold,
-    yellow$bold,
-    cyan$bold
+    crayon::green$bold,
+    crayon::blue$bold,
+    crayon::magenta$bold,
+    crayon::yellow$bold,
+    crayon::cyan$bold
   )
 
   # Function to pick color based on level
@@ -38,7 +48,7 @@ print.hydrus_model <- function(x, indent = 0, color = TRUE) {
     # If element is another list, recurse
     if (is.list(x[[name]])) {
       cat("\n")
-      pretty_list(x[[name]], indent + 1, color_supported)
+      print.hydrus_model(x[[name]], indent + 1, color_supported)
     } else {
       # Convert element to string safely
       val <- tryCatch(
@@ -46,7 +56,7 @@ print.hydrus_model <- function(x, indent = 0, color = TRUE) {
         error = function(e) "<unprintable>"
       )
       # Apply value color (white if colors supported)
-      val_str <- if (color_supported) white(val) else val
+      val_str <- if (color_supported) crayon::white(val) else val
       cat(val_str, "\n")
     }
   }
