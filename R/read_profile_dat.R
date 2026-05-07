@@ -8,6 +8,8 @@
 #'
 #' @returns A named list with:
 #'   \describe{
+#'     \item{\code{pcp_file_version}}{Integer. The \code{Pcp_File_Version} number
+#'       from the first line of PROFILE.DAT.}
 #'     \item{\code{mesh_density}}{data.frame with columns \code{fixed_points},
 #'       \code{upper_relative_size_fe}, \code{lower_relative_size_fe}.}
 #'     \item{\code{set_mesh_nodes_manually}}{Always \code{TRUE}: node positions are
@@ -50,6 +52,11 @@ read_profile_dat <- function(project_path) {
   split_ws <- function(line) unlist(strsplit(trimws(line), "\\s+"))
 
   profile <- readLines(file.path(project_path, "PROFILE.DAT"))
+
+  ## -----------------------------------------------------------------------
+  ## File version (line 1)
+  ## -----------------------------------------------------------------------
+  pcp_version <- as.integer(sub(".*=", "", profile[1]))
 
   ## -----------------------------------------------------------------------
   ## Mesh density fixed points (lines 3 to 2 + n_fixed)
@@ -144,6 +151,7 @@ read_profile_dat <- function(project_path) {
   ## Return
   ## -----------------------------------------------------------------------
   return(list(
+    pcp_file_version        = pcp_version,
     mesh_density            = mesh_density,
     set_mesh_nodes_manually = TRUE,
     mesh_nodes_manual       = data.frame(number = node_number, z = node_z),

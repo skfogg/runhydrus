@@ -12,6 +12,8 @@ read_profile_dat(project_path)
 \value{
 A named list with:
   \describe{
+    \item{\code{pcp_file_version}}{Integer. The \code{Pcp_File_Version} number
+      from the first line of PROFILE.DAT.}
     \item{\code{mesh_density}}{data.frame with columns \code{fixed_points},
       \code{upper_relative_size_fe}, \code{lower_relative_size_fe}.}
     \item{\code{set_mesh_nodes_manually}}{Always \code{TRUE}: node positions are

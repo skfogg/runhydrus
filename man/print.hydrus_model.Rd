@@ -7,7 +7,7 @@
 \method{print}{hydrus_model}(x, indent = 0, color = TRUE)
 }
 \arguments{
-\item{x}{object of class 'hydrus_model}
+\item{x}{object of class 'hydrus_model'}
 
 \item{indent}{indentation width}
 

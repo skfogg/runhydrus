@@ -15,10 +15,37 @@ run_hydrus_1D(hydrus_model, hydrus_path = NULL, show_output = TRUE)
 output should be visible on R console (relevant only on windows)}
 }
 \value{
-runs a HYDRUS model
+executes a HYDRUS model
 }
 \description{
 Executes HYDRUS 1D executable
+}
+\details{
+The user must have HYDRUS installed and the installation directory of HYDRUS
+must have read/write permissions for the user.
+
+For a Windows user, this can be done by running PowerShell as an administrator and
+executing the following:
+
+# Define the folder path to the HYDRUS executable (.exe)
+\code{$folderPath = "C:\Program Files\PC-Progress\HYDRUS 5.06 64-bit\Bin"}
+
+# Get the current ACL (Access Control List)
+\code{$acl = Get-Acl $folderPath}
+
+# Define the access rule: Everyone, FullControl, Inheritance, Allow
+\code{$accessRule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+    "Everyone",
+    "FullControl",
+    "ContainerInherit,ObjectInherit",
+    "None",
+    "Allow")}
+
+  # Add the new rule to the ACL
+  \code{$acl.SetAccessRule($accessRule)}
+
+  # Apply the updated ACL to the folder
+  \code{Set-Acl -Path $folderPath -AclObject $acl}
 }
 \examples{
 run_hydrus_1D(hydrus_model)

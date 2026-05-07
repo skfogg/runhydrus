@@ -16,9 +16,8 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/skfogg/runhydrus
 BugReports: https://github.com/skfogg/runhydrus/issues
-RoxygenNote: 7.3.3
 Imports:
   crayon,
   dplyr,
   stringr
-
+Config/roxygen2/version: 8.0.0

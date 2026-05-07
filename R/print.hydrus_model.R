@@ -1,6 +1,6 @@
 #' print.hydrus_model
 #'
-#' @param x object of class 'hydrus_model
+#' @param x object of class 'hydrus_model'
 #' @param indent indentation width
 #' @param color logical, default TRUE
 #'
@@ -57,7 +57,8 @@ print.hydrus_model <- function(x, indent = 0, color = TRUE) {
       )
       # Apply value color (white if colors supported)
       val_str <- if (color_supported) crayon::white(val) else val
-      cat(val_str, "\n")
+      #cat(val_str, "\n")
+      cat(stringr::str_remove(val_str, "\\[\\d+\\]"), "\n")
     }
   }
 }
