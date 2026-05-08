@@ -32,6 +32,8 @@
 #'   # Apply the updated ACL to the folder
 #'   \code{Set-Acl -Path $folderPath -AclObject $acl}
 #'
+#'   # Check permissions (optional)
+#'   \code{Get-Acl $folderPath}
 #'
 #'
 #' @return executes a HYDRUS model
